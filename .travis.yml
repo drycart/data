@@ -1,0 +1,28 @@
+language: php
+
+php:
+    - 7.2
+    - 7.3
+    - 7.4
+    - nightly
+
+matrix:
+  allow_failures:
+    - php: nightly
+
+cache:
+  directories:
+    - $HOME/.composer
+
+install:
+    - composer require --dev php-coveralls/php-coveralls
+    - composer install --dev --prefer-dist
+
+script:
+  - mkdir -p build/logs
+  - composer validate
+  - phpunit --coverage-clover build/logs/clover.xml
+
+
+after_success:
+  - travis_retry php vendor/bin/php-coveralls -v
