@@ -28,7 +28,7 @@ class MetaData
         $filter = $onlyPublic ? \ReflectionMethod::IS_PUBLIC : null;
         foreach($this->classReflector->getMethods($filter) as $line) {
             if(!$line->isStatic()) {
-                $name = $line->getName();
+                $name = $line->name;
                 $doc = $line->getDocComment();
                 $rules = $this->parseDoc($doc);
                 $result[$name] = $rules;
@@ -42,7 +42,7 @@ class MetaData
         $filter = $onlyPublic ? \ReflectionProperty::IS_PUBLIC : null;
         foreach($this->classReflector->getProperties($filter) as $line) {
             if(!$line->isStatic()) {
-                $name = $line->getName();
+                $name = $line->name;
                 $doc = $line->getDocComment();
                 $rules = $this->parseDoc($doc);
                 $result[$name] = $rules;
