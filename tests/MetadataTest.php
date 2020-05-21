@@ -39,7 +39,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
             ['@var'=>'var','@param'=>'param', '@return'=>'return']);
         
         $this->assertEquals(
-            $helper->methods(),
+            $helper->methods(true),
             [
                 'hydrate'=>['return'=>[['void']],'param'=>[['array', '$data']]],
             ]
@@ -75,7 +75,7 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
             ['@var'=>'var','@param'=>'param', '@return'=>'return']);
         
         $this->assertEquals(
-            $helper->methods(),
+            $helper->methods(true),
             [
                 'hydrate'=>['return'=>[['void']],'param'=>[['array', '$data']]],
             ]
