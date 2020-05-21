@@ -35,7 +35,7 @@ class CompareHelper
         $wrapper1 = new DataWrapper($value1);
         $wrapper2 = new DataWrapper($value2);
         foreach($orders as $order) {
-            if($order{0} == '!') {
+            if($order[0] == '!') {
                 $field = substr($order, 1);
                 $direction = 1;
             } else {
