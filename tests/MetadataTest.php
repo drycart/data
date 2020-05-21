@@ -11,7 +11,36 @@ use drycart\data\MetaData;
  */
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
-    public function testToString()
+    public function testDirect()
+    {
+        $helper = new MetaData(
+            dummy\DummyModel::class,
+            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
+        $fields = $helper->fields();
+        $this->assertIsArray($fields);
+        $this->assertCount(2, $fields);
+        $this->assertArrayHasKey('name', $fields);
+        $this->assertArrayHasKey('age', $fields);
+        
+        $this->assertIsArray($fields['name']);
+        $this->assertCount(1, $fields['name']);
+        $this->assertArrayHasKey('var', $fields['name']);
+        $this->assertEquals([['string','name']],$fields['name']['var']);
+        
+        $this->assertIsArray($fields['age']);
+        $this->assertCount(1, $fields['age']);
+        $this->assertArrayHasKey('var', $fields['age']);
+        $this->assertEquals([['int','age']],$fields['age']['var']);
+        
+        $this->assertEquals(
+            $helper->methods(),
+            [
+                'hydrate'=>['return'=>[['void']],'param'=>[['array', '$data']]],
+            ]
+        );
+    }
+    
+    public function testExtended()
     {
         $helper = new MetaData(
             dummy\DummyExtendedModel::class,
