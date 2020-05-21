@@ -11,12 +11,12 @@ use drycart\data\MetaData;
  */
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
-    public function testDirect()
+    public function testDirectFields()
     {
         $helper = new MetaData(
             dummy\DummyModel::class,
             ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        $fields = $helper->fields();
+        $fields = $helper->fields(true);
         $this->assertIsArray($fields);
         $this->assertCount(2, $fields);
         $this->assertArrayHasKey('name', $fields);
@@ -31,6 +31,12 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $fields['age']);
         $this->assertArrayHasKey('var', $fields['age']);
         $this->assertEquals([['int','age']],$fields['age']['var']);
+    }
+    public function testDirectMethods()
+    {
+        $helper = new MetaData(
+            dummy\DummyModel::class,
+            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
         
         $this->assertEquals(
             $helper->methods(),
@@ -40,12 +46,12 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         );
     }
     
-    public function testExtended()
+    public function testExtendedFields()
     {
         $helper = new MetaData(
             dummy\DummyExtendedModel::class,
             ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        $fields = $helper->fields();
+        $fields = $helper->fields(true);
         $this->assertIsArray($fields);
         $this->assertCount(2, $fields);
         $this->assertArrayHasKey('name', $fields);
@@ -60,6 +66,13 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $fields['age']);
         $this->assertArrayHasKey('var', $fields['age']);
         $this->assertEquals([['int','age']],$fields['age']['var']);
+    }
+    
+    public function testExtendedMethods()
+    {
+        $helper = new MetaData(
+            dummy\DummyExtendedModel::class,
+            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
         
         $this->assertEquals(
             $helper->methods(),
