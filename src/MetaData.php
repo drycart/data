@@ -23,10 +23,9 @@ class MetaData
         $this->classReflector = new \ReflectionClass($className);
     }
     
-    public function methods(bool $onlyPublic = false) : array {
+    public function methods() : array {
         $result = [];
-        $filter = $onlyPublic ? \ReflectionMethod::IS_PUBLIC : null;
-        foreach($this->classReflector->getMethods($filter) as $line) {
+        foreach($this->classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $line) {
             if(!$line->isStatic()) {
                 $name = $line->name;
                 $doc = $line->getDocComment();
@@ -37,10 +36,9 @@ class MetaData
         return $result;
     }
     
-    public function fields(bool $onlyPublic = false) : array {
+    public function fields() : array {
         $result = [];
-        $filter = $onlyPublic ? \ReflectionProperty::IS_PUBLIC : null;
-        foreach($this->classReflector->getProperties($filter) as $line) {
+        foreach($this->classReflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $line) {
             if(!$line->isStatic()) {
                 $name = $line->name;
                 $doc = $line->getDocComment();
