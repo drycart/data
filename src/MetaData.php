@@ -5,60 +5,60 @@
  */
 
 namespace drycart\data;
-use drycart\data\StrHelper;
 
 /**
- * Description of MetaData
- *
+ * Metadata for some class
+ * i.e. some data from comments for class, fields, methods
+ * 
+ * @deprecated
+ * #see MetaDataHelper
+ * 
  * @author mendel
  */
 class MetaData
 {
-    protected $classReflector;
+    protected static $helper;
+    protected $className;
     protected $rules = [
     ];
     
     public function __construct(string $className, array $rules) {
         $this->rules = $rules;
-        $this->classReflector = new \ReflectionClass($className);
+        $this->className = $className;
     }
     
-    public function methods() : array {
-        $result = [];
-        foreach($this->classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $line) {
-            if(!$line->isStatic()) {
-                $name = $line->name;
-                $doc = $line->getDocComment();
-                $rules = $this->parseDoc($doc);
-                $result[$name] = $rules;
-            }
+    protected static function getHelper() : MetaDataHelper
+    {
+        if(!isset(static::$helper)) {
+            static::$helper = new MetaDataHelper();
         }
-        return $result;
+        return static::$helper;
+    }
+
+
+    public function methods() : array {
+        $data = self::getHelper()->methodsMeta($this->className);
+        $preparedData = $this->getHelper()->prepareRules($data);
+        return $this->filterRules($preparedData, $this->rules);
     }
     
     public function fields() : array {
+        $data = self::getHelper()->fieldsMeta($this->className);
+        $preparedData = $this->getHelper()->prepareRules($data);
+        return $this->filterRules($preparedData, $this->rules);
+    }
+    
+    protected function filterRules(array $data, array $rules) : array
+    {
         $result = [];
-        foreach($this->classReflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $line) {
-            if(!$line->isStatic()) {
-                $name = $line->name;
-                $doc = $line->getDocComment();
-                $rules = $this->parseDoc($doc);
-                $result[$name] = $rules;
+        foreach($data as $name=>$line) {
+            foreach($line as $key=>$value) {
+                if(isset($rules[$key])) {
+                    $rule = $rules[$key];
+                    $result[$name][$rule] = $value;
+                }
             }
         }
         return $result;
     }
-    
-    protected function parseDoc(string $doc) {
-        $result = [];
-        foreach(StrHelper::parseDocComment($doc) as $line) {
-            $data = explode(' ', $line);
-            $key = array_shift($data); // take first
-            if(isset($this->rules[$key])) {
-                $rule = $this->rules[$key];
-                $result[$rule][] = $data;                
-            }
-        }
-        return $result;
-    }    
 }
