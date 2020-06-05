@@ -57,6 +57,20 @@ class MetaDataHelper
     }
     
     /**
+     * Get rules for class
+     * 
+     * @param string $className
+     * @return array
+     */
+    public function classRules(string $className) : array
+    {
+        if(!isset($this->cache[$className][__METHOD__])) {
+            $this->cache[$className][__METHOD__] = $this->prepareRules($this->classMeta($className));
+        }
+        return $this->cache[$className][__METHOD__];
+    }
+    
+    /**
      * Metadata for methods
      * meta at name for future add return type info
      * 
@@ -74,6 +88,20 @@ class MetaDataHelper
                     $this->cache[$className][__METHOD__][$line->name] = StrHelper::parseDocComment($doc);
                 }
             }
+        }
+        return $this->cache[$className][__METHOD__];
+    }
+
+    /**
+     * Get methods rules
+     * 
+     * @param string $className
+     * @return array
+     */
+    public function methodsRules(string $className) : array
+    {
+        if(!isset($this->cache[$className][__METHOD__])) {
+            $this->cache[$className][__METHOD__] = $this->prepareRules($this->methodsMeta($className));
         }
         return $this->cache[$className][__METHOD__];
     }
@@ -99,12 +127,28 @@ class MetaDataHelper
         }
         return $this->cache[$className][__METHOD__];
     }
+
+    /**
+     * Get fields rules
+     * 
+     * @param string $className
+     * @return array
+     */
+    public function fieldsRules(string $className) : array
+    {
+        if(!isset($this->cache[$className][__METHOD__])) {
+            $this->cache[$className][__METHOD__] = $this->prepareRules($this->fieldsMeta($className));
+        }
+        return $this->cache[$className][__METHOD__];
+    }
     
     /**
+     * Prepare rules i.e. array of "meta" parameters group by first word
+     * 
      * @param array $data
      * @return array
      */
-    public function prepareRules(array $data) : array
+    protected function prepareRules(array $data) : array
     {
         $result = [];
         foreach($data as $name=>$lines) {

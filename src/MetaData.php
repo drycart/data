@@ -37,15 +37,13 @@ class MetaData
 
 
     public function methods() : array {
-        $data = self::getHelper()->methodsMeta($this->className);
-        $preparedData = $this->getHelper()->prepareRules($data);
-        return $this->filterRules($preparedData, $this->rules);
+        $rules = self::getHelper()->methodsRules($this->className);
+        return $this->filterRules($rules, $this->rules);
     }
     
     public function fields() : array {
-        $data = self::getHelper()->fieldsMeta($this->className);
-        $preparedData = $this->getHelper()->prepareRules($data);
-        return $this->filterRules($preparedData, $this->rules);
+        $rules = self::getHelper()->fieldsRules($this->className);
+        return $this->filterRules($rules, $this->rules);
     }
     
     protected function filterRules(array $data, array $rules) : array
