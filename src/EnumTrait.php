@@ -11,7 +11,7 @@ namespace drycart\data;
  *
  * @author mendel
  */
-abstract class AbstractEnum
+trait EnumTrait
 {
     /**
      * Array for titles. Just default dummy for override if need
@@ -42,7 +42,7 @@ abstract class AbstractEnum
         $titles = static::titles();
         $result = [];
         foreach(array_keys(static::data()) as $key) {
-            $result[$key] = $titles[$key] ?? StrHelper::key2Title(strtolower($key));
+            $result[$key] = $titles[$key] ?? StrHelper::key2Label(strtolower($key));
         }
         return $result;
     }
@@ -56,7 +56,7 @@ abstract class AbstractEnum
         $titles = static::titles();
         $result = [];
         foreach(static::data() as $key=>$value) {
-            $result[$value] = $titles[$key] ?? StrHelper::key2Title(strtolower($key));
+            $result[$value] = $titles[$key] ?? StrHelper::key2Label(strtolower($key));
         }
         return $result;
     }

@@ -96,10 +96,10 @@ class StrHelperTest extends \PHPUnit\Framework\TestCase
             
     public function testKey2Title()
     {
-        $this->assertEquals(StrHelper::key2Title('forum.admins.count()'), 'Forum admins count');
-        $this->assertEquals(StrHelper::key2Title('forum_admins.Count()'), 'Forum admins count');
-        $this->assertEquals(StrHelper::key2Title('ForumAdminsCount'), 'Forum admins count');
-        $this->assertEquals(StrHelper::key2Title('Some_strangeDataKey'), 'Some strange data key');
+        $this->assertEquals(StrHelper::key2Label('forum.admins.count()'), 'Forum admins count');
+        $this->assertEquals(StrHelper::key2Label('forum_admins.Count()'), 'Forum admins count');
+        $this->assertEquals(StrHelper::key2Label('ForumAdminsCount'), 'Forum admins count');
+        $this->assertEquals(StrHelper::key2Label('Some_strangeDataKey'), 'Some strange data key');
     }
     
     public function testParseDocComment()

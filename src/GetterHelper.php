@@ -35,26 +35,71 @@ class GetterHelper
      * @return mixed
      * @throws \Exception
      */
-    public static function get($data, string $name, bool $safe = true, $default = null) {
+    public static function get($data, string $name, bool $safe = true, $default = null)
+    {
         $fields = explode('.', $name);
         foreach ($fields as $key) {
-            if (is_array($data)) { // Just array, because ArrayAccess can have his own logic as object field
-                $data = (object) $data;
-            }
-            //
-            if (isset($data->{$key})) { // simple
-                $data = $data->{$key};
-            } elseif (is_a($data, \ArrayAccess::class) and isset($data[$key])) { // for ArrayAccess obj
-                $data = $data[$key];
-                // Methods magic...
-            } elseif ((substr($key, -2) == '()') and method_exists($data, substr($key, 0, -2))) {
-                $data = call_user_func_array([$data, substr($key, 0, -2)], []);
-            } elseif ($safe) {
-                throw new \Exception("Bad field name $key at name $name fields");
-            } else {
-                return $default;
-            }
+            $data = static::subGet($data, $key, $safe, $default);
         }
         return $data;
+    }
+    
+    public static function getIterator($data): \Traversable
+    {
+        if(is_a($data, \Traversable::class)) {
+            return $data;
+        } elseif(is_array($data)) {
+            return new \ArrayIterator($data);
+        } else {
+            return new \ArrayIterator((array) $data);
+        }
+    }
+    
+    public static function getKeys($data) : array
+    {
+        if(is_object($data) and is_a($data, DataInterface::class)) {
+            return $data->keys();
+        } elseif(is_array($data)) {
+            return array_keys($data);
+        } elseif(is_a($data, \Traversable::class)) {
+            $arr = iterator_to_array($data);
+            return array_keys($arr);
+        } elseif(is_a($data, \ArrayObject::class)) {
+            $arr = $data->getArrayCopy();
+            return array_keys($arr);
+        } else {
+            $arr = (array) $data;
+            return array_keys($arr);
+        }
+    }
+
+    /**
+     * One level get
+     * 
+     * @param type $data
+     * @param string $key
+     * @param bool $safe
+     * @param type $default
+     * @return mixed
+     * @throws \Exception
+     */
+    protected static function subGet($data, string $key, bool $safe = true, $default = null)
+    {
+        if (is_array($data)) { // Just array, because ArrayAccess can have his own logic as object field
+            $data = (object) $data;
+        }
+        //
+        if (isset($data->{$key})) { // simple
+            return $data->{$key};
+        } elseif (is_a($data, \ArrayAccess::class) and isset($data[$key])) { // for ArrayAccess obj
+            return $data[$key];
+            // Methods magic...
+        } elseif ((substr($key, -2) == '()') and method_exists($data, substr($key, 0, -2))) {
+            return call_user_func_array([$data, substr($key, 0, -2)], []);
+        } elseif ($safe) {
+            throw new \Exception("Bad field name $key");
+        } else {
+            return $default;
+        }
     }
 }

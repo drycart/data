@@ -9,7 +9,7 @@ namespace drycart\data;
  * Wrapper for pretty access to field and check flexible logic conditions
  * Used for deep access to some data at some unknown data
  */
-class DataWrapper implements \Countable, \JsonSerializable, \IteratorAggregate
+class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
 {
     use CheckTrait;
     
@@ -90,14 +90,75 @@ class DataWrapper implements \Countable, \JsonSerializable, \IteratorAggregate
         return $this->data;
     }
 
+    /**
+     * Get iterator
+     * 
+     * @return \Traversable
+     */
     public function getIterator(): \Traversable
     {
-        if(is_a($this->data, \Traversable::class)) {
-            return $this->data;
-        } elseif(is_array($this->data)) {
-            return new \ArrayIterator($this->data);
+        return GetterHelper::getIterator($this->data);
+    }
+
+    /**
+     * Sugar for array access is_set
+     * 
+     * @param type $offset
+     * @return bool
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->__isset($offset);
+    }
+
+    /**
+     * Sugar ArrayAccess getter
+     * 
+     * @param type $offset
+     * @return type
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * Dummy method for interface only
+     * 
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     * @throws \RuntimeException
+     */
+    public function offsetSet($offset, $value): void
+    {
+        throw \RuntimeException('DataWraper is just read-only wrapper');
+    }
+
+    /**
+     * Dummy method for interface only
+     * 
+     * @param mixed $offset
+     * @return void
+     * @throws type
+     */
+    public function offsetUnset($offset): void
+    {
+        throw \RuntimeException('DataWraper is just read-only wrapper');
+    }
+
+    public function fieldLabel(string $key): string
+    {
+        if(is_object($this->data) and is_a($this->data, DataInterface::class)) {
+            return $this->data->fieldLabel($key);
         } else {
-            return new \ArrayIterator((array) $this->data);
+            StrHelper::key2Label($key);
         }
     }
+
+    public function keys(): array
+    {
+        return GetterHelper::getKeys($this->data);
+    }
+
 }

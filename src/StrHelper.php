@@ -191,7 +191,7 @@ class StrHelper
      * @param string $key
      * @return string
      */
-    public static function key2Title(string $key) : string {
+    public static function key2Label(string $key) : string {
         $str = static::camelCase2underscore($key);
         $prepared = ucfirst(strtolower(
             strtr($str, ['_'=>' ', '.'=>' ','()'=>''])

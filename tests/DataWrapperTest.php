@@ -34,7 +34,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($wrapper->get('arrayObj.count()'), 2);
         //
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Bad field name notExistField at name obj.notExistField fields");        
+        $this->expectExceptionMessage("Bad field name notExistField");        
         $wrapper->get('obj.notExistField');
     }
     
