@@ -101,7 +101,7 @@ class MetaDataHelper
     public function methodsRules(string $className) : array
     {
         if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = $this->prepareRules($this->methodsMeta($className));
+            $this->cache[$className][__METHOD__] = $this->prepareRulesArray($this->methodsMeta($className));
         }
         return $this->cache[$className][__METHOD__];
     }
@@ -137,26 +137,33 @@ class MetaDataHelper
     public function fieldsRules(string $className) : array
     {
         if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = $this->prepareRules($this->fieldsMeta($className));
+            $this->cache[$className][__METHOD__] = $this->prepareRulesArray($this->fieldsMeta($className));
         }
         return $this->cache[$className][__METHOD__];
+    }
+    
+    protected function prepareRulesArray(array $data) : array
+    {
+        $result = [];
+        foreach($data as $name=>$lines) {
+            $result[$name] = $this->prepareRules($lines);
+        }
+        return $result;
     }
     
     /**
      * Prepare rules i.e. array of "meta" parameters group by first word
      * 
-     * @param array $data
+     * @param array $lines
      * @return array
      */
-    protected function prepareRules(array $data) : array
+    protected function prepareRules(array $lines) : array
     {
         $result = [];
-        foreach($data as $name=>$lines) {
-            foreach($lines as $line) {
-                $data = explode(' ', $line);
-                $key = array_shift($data); // take first
-                $result[$name][$key][] = $data;                
-            }
+        foreach($lines as $line) {
+            $data = explode(' ', $line);
+            $key = array_shift($data); // take first
+            $result[$key][] = $data;                
         }
         return $result;
     }

@@ -43,7 +43,13 @@ class GetterHelper
         }
         return $data;
     }
-    
+
+    /**
+     * Get iterator for data
+     * 
+     * @param mixed $data
+     * @return \Traversable
+     */
     public static function getIterator($data): \Traversable
     {
         if(is_a($data, \Traversable::class)) {
@@ -54,18 +60,24 @@ class GetterHelper
             return new \ArrayIterator((array) $data);
         }
     }
-    
+
+    /**
+     * Get keys list for data
+     * 
+     * @param mixed $data
+     * @return array
+     */
     public static function getKeys($data) : array
     {
-        if(is_object($data) and is_a($data, DataInterface::class)) {
+        if(is_object($data) and is_a($data, ModelInterface::class)) {
             return $data->keys();
         } elseif(is_array($data)) {
             return array_keys($data);
-        } elseif(is_a($data, \Traversable::class)) {
-            $arr = iterator_to_array($data);
-            return array_keys($arr);
         } elseif(is_a($data, \ArrayObject::class)) {
             $arr = $data->getArrayCopy();
+            return array_keys($arr);
+        } elseif(is_a($data, \Traversable::class)) {
+            $arr = iterator_to_array($data);
             return array_keys($arr);
         } else {
             $arr = (array) $data;

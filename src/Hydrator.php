@@ -28,6 +28,9 @@ class Hydrator
         } else {
             $model = new $class;
         }
+        if(!is_a($model, HydratableInterface::class)) {
+            throw new \RuntimeException('Hyrdator will hydrate only instance of HydratableInterface');
+        }
         $model->hydrate($data);
         return $model;        
     }

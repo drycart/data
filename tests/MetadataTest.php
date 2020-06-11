@@ -81,4 +81,14 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
             ]
         );
     }
+    
+    public function testClassRules()
+    {
+        $helper = new \drycart\data\MetaDataHelper();
+        $rules = $helper->classRules(dummy\DummyModel::class);
+        var_dump($rules);
+        $this->assertIsArray($rules);
+        $this->assertArrayHasKey('@author', $rules);
+        $this->assertEquals('mendel',$rules['@author'][0][0]);
+    }
 }

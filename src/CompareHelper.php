@@ -124,7 +124,7 @@ class CompareHelper
             case '=':
                 return ($value1 == $value2);
             default:
-                throw new \Exception('Unknown rule '.$rule);
+                throw new \RuntimeException('Unknown rule '.$rule);
         }
     }
 }

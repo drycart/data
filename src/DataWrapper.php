@@ -9,7 +9,7 @@ namespace drycart\data;
  * Wrapper for pretty access to field and check flexible logic conditions
  * Used for deep access to some data at some unknown data
  */
-class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
+class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 {
     use CheckTrait;
     
@@ -22,6 +22,9 @@ class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
      */
     public function __construct($data, bool $safe = true)
     {
+        if(!is_array($data) and ! is_object($data)) {
+            throw new \RuntimeException('DataWraper can wrap only array or object');
+        }
         $this->data = $data;
         $this->safe = $safe;
     }
@@ -101,6 +104,16 @@ class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
     }
 
     /**
+     * Get keys list
+     * 
+     * @return array
+     */
+    public function keys(): array
+    {
+        return GetterHelper::getKeys($this->data);
+    }
+
+    /**
      * Sugar for array access is_set
      * 
      * @param type $offset
@@ -122,6 +135,39 @@ class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
         return $this->get($offset);
     }
 
+    public function fieldLabel(string $key): string
+    {
+        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+            return $this->data->fieldLabel($key);
+        } else {
+            return StrHelper::key2Label($key);
+        }
+    }
+
+    public function title(): string
+    {
+        if(is_array($this->data)) {
+            return 'Some array...';
+        } elseif(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+            return $this->data->title();
+        } else {
+            return 'Object #'.spl_object_id($this->data);
+        }
+    }
+
+    public function fieldsInfo(): array
+    {
+        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+            return $this->data->fieldsInfo();
+        }
+        
+        $info = [];
+        foreach($this->keys() as $key) {
+            $info[$key] = [];
+        }
+        return $info;
+    }
+
     /**
      * Dummy method for interface only
      * 
@@ -132,7 +178,7 @@ class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
      */
     public function offsetSet($offset, $value): void
     {
-        throw \RuntimeException('DataWraper is just read-only wrapper');
+        throw new \RuntimeException('DataWraper is just read-only wrapper');
     }
 
     /**
@@ -144,21 +190,7 @@ class DataWrapper implements DataInterface, \IteratorAggregate, \ArrayAccess
      */
     public function offsetUnset($offset): void
     {
-        throw \RuntimeException('DataWraper is just read-only wrapper');
-    }
-
-    public function fieldLabel(string $key): string
-    {
-        if(is_object($this->data) and is_a($this->data, DataInterface::class)) {
-            return $this->data->fieldLabel($key);
-        } else {
-            StrHelper::key2Label($key);
-        }
-    }
-
-    public function keys(): array
-    {
-        return GetterHelper::getKeys($this->data);
+        throw new \RuntimeException('DataWraper is just read-only wrapper');
     }
 
 }

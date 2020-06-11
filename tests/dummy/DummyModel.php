@@ -7,13 +7,17 @@
 
 namespace drycart\data\tests\dummy;
 
+use drycart\data\HydratableInterface;
+use drycart\data\HydratableTrait;
 /**
  * Description of DummyModel
  *
  * @author mendel
  */
-class DummyModel
+class DummyModel implements HydratableInterface
 {
+    use HydratableTrait;
+    
     /**
      * @var string name
      */
@@ -23,16 +27,10 @@ class DummyModel
      * @var int age
      */
     public $age;
-    
-    /**
-     * Hydrate
-     * @param array $data
-     * @return void
-     */
-    public function hydrate(array $data) : void
+        
+    public function getSomeString() : string
     {
-        foreach($data as $key=>$value) {
-            $this->$key = $value;
-        }
+        return 'some string';
     }
+
 }

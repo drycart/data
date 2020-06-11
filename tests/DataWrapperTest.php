@@ -64,13 +64,50 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($wrapper->field1, 'value1');
         $this->assertEquals($wrapper->$field2, 'value1');
         $this->assertEquals($wrapper->$field3, 2);
+        $this->assertEquals($wrapper['field1'], 'value1');
+        $this->assertEquals($wrapper[$field2], 'value1');
+        $this->assertEquals($wrapper[$field3], 2);
         
         $this->assertFalse(isset($wrapper->notExistField));
         $this->assertTrue(isset($wrapper->field1));
+        $this->assertFalse(isset($wrapper['notExistField']));
+        $this->assertTrue(isset($wrapper['field1']));
         
         $this->assertEquals($wrapper->arrayObj->count(), 2);
         $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1','field2'=>'value2']));
         $this->assertEquals($wrapper2->count(), 2);
+        $this->assertEquals(json_encode(['field1'=>'value1','field2'=>'value2']), json_encode($wrapper2));
+        
+        $wrapper3 = new DataWrapper(new dummy\DummyModel());
+        $this->assertEquals($wrapper3->getSomeString(), 'some string');
+        
+        $this->assertEquals('Array obj count', $wrapper->fieldLabel($field3));
+        $wrapper4 = new DataWrapper($wrapper);
+        $this->assertEquals('Array obj count', $wrapper4->fieldLabel($field3));
+        
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("DataWraper can wrap only array or object");        
+        new DataWrapper('some string');
+    }
+    
+    public function testDummyArrayUnset()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("DataWraper is just read-only wrapper");        
+        
+        unset($wrapper['someField']);
+    }
+    
+    public function testDummyArraySet()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("DataWraper is just read-only wrapper");        
+        
+        $wrapper['someField'] = 'some string';
     }
     
     public function testCheckFieldDirect()
@@ -145,5 +182,78 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
             '>=arrayObj.count()' => 1,
             '<>field1' => 'notExist'
         ]));
+    }
+    
+    public function testIterator()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        $array = iterator_to_array($wrapper);
+        $this->assertArrayHasKey('field1', $array);
+        $this->assertEquals('value1',$array['field1']);
+        
+        $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1']));
+        $array2 = iterator_to_array($wrapper2);
+        $this->assertArrayHasKey('field1', $array2);
+        $this->assertEquals('value1',$array2['field1']);
+        
+        $wrapper3 = new DataWrapper((object) ['field1'=>'value1']);
+        $array3 = iterator_to_array($wrapper3);
+        $this->assertArrayHasKey('field1', $array3);
+        $this->assertEquals('value1',$array3['field1']);
+    }
+    
+    public function testKeys()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        $this->assertEquals([
+            'field1','field2','obj','array','arrayObj'
+        ],$wrapper->keys());
+        
+        $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1']));
+        $this->assertEquals([
+            'field1'
+        ],$wrapper2->keys());
+        
+        $wrapper3 = new DataWrapper((object) ['field1'=>'value1']);
+        $this->assertEquals([
+            'field1'
+        ],$wrapper3->keys());
+        
+        $arrayObj = new \ArrayObject(['field1'=>'value1']);
+        $wrapper4 = new DataWrapper($arrayObj->getIterator());
+        $this->assertEquals([
+            'field1'
+        ],$wrapper4->keys());
+        
+        $wrapper5 = new DataWrapper($wrapper2);
+        $this->assertEquals([
+            'field1'
+        ],$wrapper5->keys());
+    }
+    
+    public function testTitle()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        $this->assertEquals('Some array...',$wrapper->title());
+        
+        $arrayObj = new \ArrayObject(['field1'=>'value1']);
+        $wrapper2 = new DataWrapper($arrayObj);
+        $this->assertEquals('Object #'.spl_object_id($arrayObj),$wrapper2->title());
+        
+        $wrapper3 = new DataWrapper($wrapper2);
+        $this->assertEquals('Object #'.spl_object_id($arrayObj),$wrapper3->title());
+    }
+    
+    public function testFieldsInfo()
+    {
+        $wrapper = $this->prepareWrapper(FALSE);
+        $this->assertEquals([
+            'field1'=>[],'field2'=>[],'obj'=>[],'array'=>[],'arrayObj'=>[]
+        ],$wrapper->fieldsInfo());
+        
+        $wrapper2 = new DataWrapper($wrapper);
+        $this->assertEquals([
+            'field1'=>[],'field2'=>[],'obj'=>[],'array'=>[],'arrayObj'=>[]
+        ],$wrapper2->fieldsInfo());
     }
 }
