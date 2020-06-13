@@ -15,11 +15,23 @@ namespace drycart\data;
 class CompareHelper
 {
     // Dont change order - longer will be first (before other started from same symbols)
+    // @2DO: when updated StrHepler::findPrefix - refactor for remove aliases
     const RULES = [
         '<=', '=<', '>=', '=>','!=','<>', '!like:','!contain:', '!in:', 'like:','contain:', 'in:', '<', '>', '!', '='
     ];
     const STARED_RULES = [
         '*<=', '*=<', '*>=', '*=>','*!=','*<>', '*!like:','*!contain:', '*!in:', '*like:','*contain:', '*in:', '*<', '*>', '*!', '*='
+    ];
+    const RULES_ALIASES = [
+        '=<' => '<=',
+        '=>' => '>=',
+        '!' => '!=',
+        '<>' => '!=',
+        
+        '*=<' => '*<=',
+        '*=>' => '*>=',
+        '*!' => '*!=',
+        '*<>' => '*!=',
     ];
 
     /**
@@ -58,7 +70,9 @@ class CompareHelper
      */
     public static function findRulePrefix(string $str) : array
     {
-        return StrHelper::findPrefix($str, array_merge(self::STARED_RULES, self::RULES), '=');
+        $allRules = array_merge(self::STARED_RULES, self::RULES);
+        [$rule,$field] = StrHelper::findPrefix($str, $allRules, '=');
+        return [static::tryRuleAliase($rule), $field];
     }
     
     /**
@@ -96,10 +110,8 @@ class CompareHelper
     {
         switch ($rule) {
             case '<=':
-            case '=<':
                 return ($value1 <= $value2);
             case '>=':
-            case '=>':
                 return ($value1 >= $value2);
             case '!like:':
                 return !StrHelper::like($value1, $value2);
@@ -117,14 +129,21 @@ class CompareHelper
                 return ($value1 < $value2);
             case '>':
                 return ($value1 > $value2);
-            case '!':
             case '!=':
-            case '<>':
                 return ($value1 != $value2);
             case '=':
                 return ($value1 == $value2);
             default:
                 throw new \RuntimeException('Unknown rule '.$rule);
+        }
+    }
+    
+    protected static function tryRuleAliase(string $rule) : string
+    {
+        if(isset(self::RULES_ALIASES[$rule])) {
+            return self::RULES_ALIASES[$rule];
+        } else {
+            return $rule; 
         }
     }
 }

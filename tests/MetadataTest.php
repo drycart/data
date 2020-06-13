@@ -86,9 +86,30 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
     {
         $helper = new \drycart\data\MetaDataHelper();
         $rules = $helper->classRules(dummy\DummyModel::class);
-        var_dump($rules);
+        
         $this->assertIsArray($rules);
         $this->assertArrayHasKey('@author', $rules);
         $this->assertEquals('mendel',$rules['@author'][0][0]);
+    }
+    
+    public function testGetSet()
+    {
+        // Yes, it just for 100% coverage
+        $helper = new \drycart\data\MetaDataHelper();
+        $config = [
+            'classMeta' => [
+                "Description of DummyModel",
+                '',
+                "@author mendel"
+            ],
+            'classRules' => [
+                '@author' => [['max']]
+            ]
+        ];
+        $helper->setCache([dummy\DummyModel::class=>$config]);
+        $rules = $helper->classRules(dummy\DummyModel::class);
+        var_dump($helper->getCache());
+        $this->assertEquals('max',$rules['@author'][0][0]);
+        $this->assertEquals([dummy\DummyModel::class=>$config],$helper->getCache());
     }
 }

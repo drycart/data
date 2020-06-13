@@ -110,6 +110,7 @@ class StrHelper
      */
     public static function findPrefix(string $str, array $prefixes, ?string $default = null) : array
     {
+        // @2DO: sort prefixes list by lenght and refactor constants at compare helper
         foreach($prefixes as $prefix) {
             if(static::start($str, $prefix, false)) {
                 return [$prefix, static::removePrefix($str, $prefix)];

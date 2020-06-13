@@ -8,7 +8,8 @@
 namespace drycart\data;
 
 /**
- *
+ * Trait for add check logic
+ * 
  * @author mendel
  */
 trait CheckTrait
@@ -23,6 +24,7 @@ trait CheckTrait
     
     /**
      * Check if data satisfies the condition
+     * 
      * @param array $conditions
      * @return bool
      */
@@ -30,14 +32,11 @@ trait CheckTrait
     {
         $args = CompareHelper::tryPrepareSimpleRules($conditions);
         $type = array_shift($args);
-        switch ($type) {
-            case 'AND':
+        switch (strtolower($type)) {
             case 'and':
                 return $this->checkAnd($args);
-            case 'OR':
             case 'or':
                 return $this->checkOr($args);
-            case 'NOT':
             case 'not':
                 return !$this->check($args[0]);
             default:
@@ -47,6 +46,7 @@ trait CheckTrait
 
     /**
      * Check AND condition
+     * 
      * @param array $conditions
      * @return bool
      */
@@ -62,6 +62,7 @@ trait CheckTrait
 
     /**
      * Check OR condition
+     * 
      * @param array $conditions
      * @return bool
      */
@@ -77,6 +78,7 @@ trait CheckTrait
 
     /**
      * Check/compare some field by rule and some value
+     * 
      * @param string $staredRule
      * @param mixed $arg1
      * @param mixed $arg2

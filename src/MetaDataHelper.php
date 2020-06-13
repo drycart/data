@@ -48,12 +48,12 @@ class MetaDataHelper
      */
     public function classMeta(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
+        if(!isset($this->cache[$className][__FUNCTION__])) {
             $classReflector = new \ReflectionClass($className);
             $doc = $classReflector->getDocComment();
-            $this->cache[$className][__METHOD__] = StrHelper::parseDocComment($doc);
+            $this->cache[$className][__FUNCTION__] = StrHelper::parseDocComment($doc);
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
     
     /**
@@ -64,10 +64,10 @@ class MetaDataHelper
      */
     public function classRules(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = $this->prepareRules($this->classMeta($className));
+        if(!isset($this->cache[$className][__FUNCTION__])) {
+            $this->cache[$className][__FUNCTION__] = $this->prepareRules($this->classMeta($className));
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
     
     /**
@@ -79,17 +79,17 @@ class MetaDataHelper
      */
     public function methodsMeta(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = [];
+        if(!isset($this->cache[$className][__FUNCTION__])) {
+            $this->cache[$className][__FUNCTION__] = [];
             $classReflector = new \ReflectionClass($className);
             foreach($classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $line) {
                 if(!$line->isStatic()) {
                     $doc = $line->getDocComment();
-                    $this->cache[$className][__METHOD__][$line->name] = StrHelper::parseDocComment($doc);
+                    $this->cache[$className][__FUNCTION__][$line->name] = StrHelper::parseDocComment($doc);
                 }
             }
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
 
     /**
@@ -100,10 +100,10 @@ class MetaDataHelper
      */
     public function methodsRules(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = $this->prepareRulesArray($this->methodsMeta($className));
+        if(!isset($this->cache[$className][__FUNCTION__])) {
+            $this->cache[$className][__FUNCTION__] = $this->prepareRulesArray($this->methodsMeta($className));
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
     
     /**
@@ -115,17 +115,17 @@ class MetaDataHelper
      */
     public function fieldsMeta(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = [];
+        if(!isset($this->cache[$className][__FUNCTION__])) {
+            $this->cache[$className][__FUNCTION__] = [];
             $classReflector = new \ReflectionClass($className);
             foreach($classReflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $line) {
                 if(!$line->isStatic()) {
                     $doc = $line->getDocComment();
-                    $this->cache[$className][__METHOD__][$line->name] = StrHelper::parseDocComment($doc);
+                    $this->cache[$className][__FUNCTION__][$line->name] = StrHelper::parseDocComment($doc);
                 }
             }
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
 
     /**
@@ -136,10 +136,10 @@ class MetaDataHelper
      */
     public function fieldsRules(string $className) : array
     {
-        if(!isset($this->cache[$className][__METHOD__])) {
-            $this->cache[$className][__METHOD__] = $this->prepareRulesArray($this->fieldsMeta($className));
+        if(!isset($this->cache[$className][__FUNCTION__])) {
+            $this->cache[$className][__FUNCTION__] = $this->prepareRulesArray($this->fieldsMeta($className));
         }
-        return $this->cache[$className][__METHOD__];
+        return $this->cache[$className][__FUNCTION__];
     }
     
     protected function prepareRulesArray(array $data) : array

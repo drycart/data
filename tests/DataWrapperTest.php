@@ -73,13 +73,25 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(isset($wrapper['notExistField']));
         $this->assertTrue(isset($wrapper['field1']));
         
+        $this->assertEquals($wrapper['field1'], 'value1');
+        unset($wrapper['field1']);
+        $this->assertNull($wrapper['field1']);
+        
+        $wrapper['someField'] = 'some string';
+        $this->assertEquals('some string', $wrapper['someField']);
+        
         $this->assertEquals($wrapper->arrayObj->count(), 2);
         $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1','field2'=>'value2']));
         $this->assertEquals($wrapper2->count(), 2);
         $this->assertEquals(json_encode(['field1'=>'value1','field2'=>'value2']), json_encode($wrapper2));
         
-        $wrapper3 = new DataWrapper(new dummy\DummyModel());
+        $wrapper3 = new DataWrapper(new dummy\DummyModel(), false);
         $this->assertEquals($wrapper3->getSomeString(), 'some string');
+        
+        $wrapper3['someField'] = 'some string3';
+        $this->assertEquals('some string3', $wrapper3['someField']);
+        unset($wrapper3['someField']);
+        $this->assertNull($wrapper3['someField']);
         
         $this->assertEquals('Array obj count', $wrapper->fieldLabel($field3));
         $wrapper4 = new DataWrapper($wrapper);
@@ -88,26 +100,6 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage("DataWraper can wrap only array or object");        
         new DataWrapper('some string');
-    }
-    
-    public function testDummyArrayUnset()
-    {
-        $wrapper = $this->prepareWrapper(FALSE);
-        
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("DataWraper is just read-only wrapper");        
-        
-        unset($wrapper['someField']);
-    }
-    
-    public function testDummyArraySet()
-    {
-        $wrapper = $this->prepareWrapper(FALSE);
-        
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("DataWraper is just read-only wrapper");        
-        
-        $wrapper['someField'] = 'some string';
     }
     
     public function testCheckFieldDirect()
@@ -153,7 +145,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         ]));
         $this->assertFalse($wrapper->check([
             'OR',
-            ['*<>','field1', 'array.field1'],
+            ['*!=','field1', 'array.field1'],
             ['*>','arrayObj.count()', 'arrayObj.count()'],
             ['*=','field1', 'notExistField']
         ]));

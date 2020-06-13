@@ -18,7 +18,7 @@ class CompareHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(CompareHelper::checkRule('<', 100, 150));
         $this->assertTrue(CompareHelper::checkRule('>', 100, 80));
         $this->assertTrue(CompareHelper::checkRule('=', 100, 100));
-        $this->assertTrue(CompareHelper::checkRule('<>', 100, 1));
+        $this->assertTrue(CompareHelper::checkRule('!=', 100, 1));
         $this->assertTrue(CompareHelper::checkRule('like:', 'Hello World!', 'Hello %!'));
         $this->assertTrue(CompareHelper::checkRule('!like:', 'Hello World!', 'Bye %!'));
         $this->assertTrue(CompareHelper::checkRule('contain:', ['a','b','c'], 'b'));
@@ -31,7 +31,7 @@ class CompareHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(CompareHelper::checkRule('<', 100, 80));
         $this->assertFalse(CompareHelper::checkRule('>', 100, 150));
         $this->assertFalse(CompareHelper::checkRule('=', 100, 1));
-        $this->assertFalse(CompareHelper::checkRule('<>', 100, 100));
+        $this->assertFalse(CompareHelper::checkRule('!=', 100, 100));
         $this->assertFalse(CompareHelper::checkRule('like:', 'Hello World!', 'Bue %!'));
         $this->assertFalse(CompareHelper::checkRule('!like:', 'Hello World!', 'Hello %!'));
         $this->assertFalse(CompareHelper::checkRule('contain:', ['a','b','c'], 'd'));

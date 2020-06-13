@@ -86,7 +86,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 
     /**
      * Json serialise data - here just data object/array
-     * @return type
+     * @return object|array
      */
     public function jsonSerialize()
     {
@@ -169,28 +169,45 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * Dummy method for interface only
+     * Magic setter for ArrayAccess
      * 
      * @param mixed $offset
      * @param mixed $value
      * @return void
-     * @throws \RuntimeException
      */
     public function offsetSet($offset, $value): void
     {
-        throw new \RuntimeException('DataWraper is just read-only wrapper');
+        if(is_array($this->data) or is_a($this->data, \ArrayAccess::class)) {
+            $this->data[$offset] = $value;
+        } else {
+            $this->data->$offset = $value;
+        }
     }
 
     /**
-     * Dummy method for interface only
+     * Magic unset for ArrayAccess
      * 
      * @param mixed $offset
      * @return void
-     * @throws type
      */
     public function offsetUnset($offset): void
     {
-        throw new \RuntimeException('DataWraper is just read-only wrapper');
+        unset($this->$offset);
+    }
+    
+    /**
+     * Magic unset
+     * 
+     * @param string $name
+     * @return void
+     */
+    public function __unset($name) : void
+    {
+        if(is_array($this->data) or is_a($this->data, \ArrayAccess::class)) {
+            unset($this->data[$name]);
+        } else {
+            unset($this->data->$name);
+        }
     }
 
 }
