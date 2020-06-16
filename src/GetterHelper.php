@@ -31,15 +31,14 @@ class GetterHelper
      * @param array|object $data data for pretty access
      * @param string $name name for access
      * @param bool $safe if true - Exception for not exist fields
-     * @param mixed $default used for non safe request, if we dont find answer
      * @return mixed
      * @throws \Exception
      */
-    public static function get($data, string $name, bool $safe = true, $default = null)
+    public static function get($data, string $name, bool $safe = true)
     {
         $fields = explode('.', $name);
         foreach ($fields as $key) {
-            $data = static::subGet($data, $key, $safe, $default);
+            $data = static::subGet($data, $key, $safe);
         }
         return $data;
     }
@@ -91,11 +90,10 @@ class GetterHelper
      * @param type $data
      * @param string $key
      * @param bool $safe
-     * @param type $default
      * @return mixed
      * @throws \Exception
      */
-    protected static function subGet($data, string $key, bool $safe = true, $default = null)
+    protected static function subGet($data, string $key, bool $safe = true)
     {
         if (is_array($data)) { // Just array, because ArrayAccess can have his own logic as object field
             $data = (object) $data;
@@ -111,7 +109,7 @@ class GetterHelper
         } elseif ($safe) {
             throw new \Exception("Bad field name $key");
         } else {
-            return $default;
+            return null;
         }
     }
 }

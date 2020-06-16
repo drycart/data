@@ -13,7 +13,6 @@ namespace drycart\data;
  */
 interface ModelInterface extends \Countable, \JsonSerializable
 {
-    public function get(string $name, $default = null);
     public function check(array $conditions) : bool;
     public function keys() : array;
     public function fieldLabel(string $key) : string;

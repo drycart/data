@@ -15,14 +15,6 @@ namespace drycart\data;
 trait CheckTrait
 {
     /**
-     * Get field data by field name
-     * 
-     * @param string $name name for access
-     * @return mixed
-     */
-    abstract public function get(string $name);
-    
-    /**
      * Check if data satisfies the condition
      * 
      * @param array $conditions
@@ -87,9 +79,9 @@ trait CheckTrait
     private function checkField(string $staredRule, $arg1, $arg2) : bool
     {
         [$rulePrefix, $rule] = StrHelper::findPrefix($staredRule, ['*']);
-        $value1 = $this->get($arg1);
+        $value1 = $this->$arg1;
         if($rulePrefix == '*') {
-            $value2 = $this->get($arg2);
+            $value2 = $this->$arg2;
         } else {
             $value2 = $arg2;
         }

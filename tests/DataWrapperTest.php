@@ -27,32 +27,29 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
     {
         $wrapper = $this->prepareWrapper(TRUE);
         //
-        $this->assertEquals($wrapper->get('field1'), 'value1');
-        $this->assertEquals($wrapper->get('obj.field2'), 'value2');
-        $this->assertEquals($wrapper->get('array.field1'), 'value1');
-        $this->assertEquals($wrapper->get('arrayObj.field1'), 'value1');
-        $this->assertEquals($wrapper->get('arrayObj.count()'), 2);
+        $this->assertEquals($wrapper['field1'], 'value1');
+        $this->assertEquals($wrapper['obj.field2'], 'value2');
+        $this->assertEquals($wrapper['array.field1'], 'value1');
+        $this->assertEquals($wrapper['arrayObj.field1'], 'value1');
+        $this->assertEquals($wrapper['arrayObj.count()'], 2);
         //
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Bad field name notExistField");        
-        $wrapper->get('obj.notExistField');
+        $wrapper['obj.notExistField'];
     }
     
     public function testNotSafe()
     {
         $wrapper = $this->prepareWrapper(FALSE);
         //
-        $this->assertEquals($wrapper->get('field1'), 'value1');
-        $this->assertEquals($wrapper->get('obj.field2'), 'value2');
-        $this->assertEquals($wrapper->get('array.field1'), 'value1');
-        $this->assertEquals($wrapper->get('arrayObj.field1'), 'value1');
-        $this->assertEquals($wrapper->get('arrayObj.count()'), 2);
+        $this->assertEquals($wrapper['field1'], 'value1');
+        $this->assertEquals($wrapper['obj.field2'], 'value2');
+        $this->assertEquals($wrapper['array.field1'], 'value1');
+        $this->assertEquals($wrapper['arrayObj.field1'], 'value1');
+        $this->assertEquals($wrapper['arrayObj.count()'], 2);
         //
-        $this->assertEquals($wrapper->get('obj.notExistField'), null);
-        $this->assertEquals($wrapper->get('obj.notExistMethod()'), null);
-        //
-        $this->assertEquals($wrapper->get('obj.notExistField', 'default'), 'default');
-        $this->assertEquals($wrapper->get('obj.notExistMethod()', 'default'), 'default');
+        $this->assertEquals($wrapper['obj.notExistField'], null);
+        $this->assertEquals($wrapper['obj.notExistMethod()'], null);
     }
     
     public function testMagic()

@@ -28,19 +28,6 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
         $this->data = $data;
         $this->safe = $safe;
     }
-
-    /**
-     * Get some data by pretty name
-     * 
-     * @param string $name name for access
-     * @param mixed $default used for non safe request, if we dont find answer
-     * @return mixed
-     * @throws \Exception
-     */
-    public function get(string $name, $default = null)
-    {
-        return GetterHelper::get($this->data, $name, $this->safe, $default);
-    }
     
     /**
      * Magic proxy call to data
@@ -61,17 +48,19 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function __isset($name)
     {
-        return !is_null($this->get($name));
+        return !is_null($this->__get($name));
     }
 
     /**
-     * Magic getter, sugar for get()
-     * @param string $name
+     * Get some data by pretty name
+     * 
+     * @param string $name name for access
      * @return mixed
+     * @throws \Exception
      */
     public function __get($name)
     {
-        return $this->get($name);
+        return GetterHelper::get($this->data, $name, $this->safe);
     }
 
     /**
@@ -132,7 +121,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->get($offset);
+        return $this->__get($offset);
     }
 
     public function fieldLabel(string $key): string

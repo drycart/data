@@ -230,7 +230,7 @@ class StrHelper
         $wrapper = new DataWrapper($data);
         $replace = [];
         foreach (static::templateKeys($template) as $key) {
-            $replace['{' . $key . '}'] = $wrapper->get($key);
+            $replace['{' . $key . '}'] = $wrapper[$key];
         }
         return strtr($template, $replace);
     }

@@ -54,8 +54,8 @@ class CompareHelper
                 $field = $order;
                 $direction = -1;
             }
-            if ($wrapper1->get($field) != $wrapper2->get($field)) {
-                return $direction * ($wrapper1->get($field) < $wrapper2->get($field) ? -1 : 1);                
+            if ($wrapper1[$field] != $wrapper2[$field]) {
+                return $direction * ($wrapper1[$field] < $wrapper2[$field] ? -1 : 1);                
             }
         }
         return 0;

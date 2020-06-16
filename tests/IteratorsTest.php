@@ -7,6 +7,7 @@ namespace drycart\data\tests;
 use drycart\data\SortIterator;
 use drycart\data\FilterIterator;
 use drycart\data\HydrateIterator;
+use drycart\data\DehydrateIterator;
 
 /**
  * @author mendel
@@ -64,5 +65,21 @@ class IteratorsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(get_class($arr[1]), dummy\DummyModel::class);
         $this->assertEquals($arr[1]->name, 'Jonn');
         $this->assertEquals($arr[1]->age, 18);
+    }
+    
+    public function testDehydrateIterator()
+    {
+        $data = [
+            ['name'=>'Max','age'=>39],
+            ['name'=>'Jonn','age'=>18],
+        ];
+        $hydrateIterator = new HydrateIterator(new \ArrayObject($data), dummy\DummyModel::class);
+        $dehydrateIterator = new DehydrateIterator($hydrateIterator);
+        $arr = iterator_to_array($dehydrateIterator);
+        $this->assertCount(2, $arr);
+        $this->assertIsArray($arr[0]);
+        $this->assertIsArray($arr[1]);
+        $this->assertEquals($data[0],$arr[0]);
+        $this->assertEquals($data[1],$arr[1]);
     }
 }
