@@ -99,7 +99,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         new DataWrapper('some string');
     }
     
-    public function testCheckFieldDirect()
+    public function testCheck()
     {
         $wrapper = $this->prepareWrapper(FALSE);
         $this->assertTrue($wrapper->check(['=','field1', 'value1']));
@@ -107,70 +107,6 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($wrapper->check(['=','notExistField', null]));
         $this->assertTrue($wrapper->check(['=','arrayObj.count()', 2]));
         $this->assertTrue($wrapper->check(['>','arrayObj.count()', 1]));
-        //
-    }
-    
-    public function testCheckFieldRelated()
-    {
-        $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertTrue($wrapper->check(['*=','field1', 'array.field1']));
-        $this->assertFalse($wrapper->check(['*=','field1', 'notExistField']));
-        $this->assertTrue($wrapper->check(['*=','notExistField', 'notExistField2']));
-        $this->assertTrue($wrapper->check(['*=','arrayObj.count()', 'arrayObj.count()']));
-        $this->assertTrue($wrapper->check(['*>=','arrayObj.count()', 'arrayObj.count()']));
-        //
-    }
-    
-    public function testCheckLogical()
-    {
-        $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertFalse($wrapper->check([
-            'NOT',
-            ['*=','field1', 'array.field1']
-        ]));
-        $this->assertFalse($wrapper->check([
-            'AND',
-            ['*=','field1', 'array.field1'],
-            ['*>=','arrayObj.count()', 'arrayObj.count()'],
-            ['*=','field1', 'notExistField']
-        ]));
-        $this->assertTrue($wrapper->check([
-            'OR',
-            ['*=','field1', 'array.field1'],
-            ['*>=','arrayObj.count()', 'arrayObj.count()'],
-            ['*=','field1', 'notExistField']
-        ]));
-        $this->assertFalse($wrapper->check([
-            'OR',
-            ['*!=','field1', 'array.field1'],
-            ['*>','arrayObj.count()', 'arrayObj.count()'],
-            ['*=','field1', 'notExistField']
-        ]));
-        $this->assertTrue($wrapper->check([
-            'and',
-            ['*=','field1', 'array.field1'],
-            ['*>=','arrayObj.count()', 'arrayObj.count()'],
-            [
-                'not',
-                ['*=','field1', 'notExistField']
-            ],
-            [
-                'or',
-                ['*=','field1', 'array.field1'],
-                ['*>=','arrayObj.count()', 'arrayObj.count()'],
-                ['*=','field1', 'notExistField']
-            ]
-        ]));
-        $this->assertTrue($wrapper->check([
-            '*=field1' => 'array.field1',
-            '*>=arrayObj.count()' => 'arrayObj.count()',
-            '*<>field1' => 'notExistField'
-        ]));
-        $this->assertTrue($wrapper->check([
-            'field1' => 'value1',
-            '>=arrayObj.count()' => 1,
-            '<>field1' => 'notExist'
-        ]));
     }
     
     public function testIterator()

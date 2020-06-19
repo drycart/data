@@ -5,7 +5,8 @@
  *  @license see license.txt
  */
 
-namespace drycart\data;
+namespace drycart\data\Iterator;
+use drycart\data\CompareHelper;
 
 /**
  * Sort iterator data using order rules

@@ -1,5 +1,6 @@
 <?php
-namespace drycart\data;
+namespace drycart\data\Iterator;
+use drycart\data\DataWrapper;
 
 /**
  * Filter data at iterator by condition

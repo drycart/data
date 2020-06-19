@@ -7,6 +7,9 @@ namespace drycart\data\tests;
 use drycart\data\CompareHelper;
 
 /**
+ * @2DO: add test for compareByOrders
+ * @2DO: add test for aliases
+ * 
  * @author mendel
  */
 class CompareHelperTest extends \PHPUnit\Framework\TestCase

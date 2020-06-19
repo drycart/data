@@ -69,7 +69,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function check(array $conditions) : bool
     {
-        return CompareHelper::check($this, $conditions);
+        return CheckHelper::check($this, $conditions);
     }
 
     /**

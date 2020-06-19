@@ -4,10 +4,10 @@
  * @license see license.txt
  */
 namespace drycart\data\tests;
-use drycart\data\SortIterator;
-use drycart\data\FilterIterator;
-use drycart\data\HydrateIterator;
-use drycart\data\DehydrateIterator;
+use drycart\data\Iterator\SortIterator;
+use drycart\data\Iterator\FilterIterator;
+use drycart\data\Iterator\HydrateIterator;
+use drycart\data\Iterator\DehydrateIterator;
 
 /**
  * @author mendel

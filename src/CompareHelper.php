@@ -19,19 +19,12 @@ class CompareHelper
     const RULES = [
         '<=', '=<', '>=', '=>','!=','<>', '!like:','!contain:', '!in:', 'like:','contain:', 'in:', '<', '>', '!', '='
     ];
-    const STARED_RULES = [
-        '*<=', '*=<', '*>=', '*=>','*!=','*<>', '*!like:','*!contain:', '*!in:', '*like:','*contain:', '*in:', '*<', '*>', '*!', '*='
-    ];
+    
     const RULES_ALIASES = [
         '=<' => '<=',
         '=>' => '>=',
         '!' => '!=',
         '<>' => '!=',
-        
-        '*=<' => '*<=',
-        '*=>' => '*>=',
-        '*!' => '*!=',
-        '*<>' => '*!=',
     ];
 
     /**
@@ -75,7 +68,7 @@ class CompareHelper
      */
     public static function compareByRule(string $rule, $value1, $value2) : bool
     {
-        switch ($rule) {
+        switch (static::tryRuleAliase($rule)) {
             case '<=':
                 return ($value1 <= $value2);
             case '>=':
@@ -104,118 +97,13 @@ class CompareHelper
                 throw new \RuntimeException('Unknown rule '.$rule);
         }
     }
-    
-    /**
-     * Check if data satisfies the condition
-     * 
-     * @param mixed $data
-     * @param array $conditions
-     * @return bool
-     */
-    public static function check($data, array $conditions) : bool
-    {
-        $args = self::tryPrepareSimpleRules($conditions);
-        $type = array_shift($args);
-        switch (strtolower($type)) {
-            case 'and':
-                return self::checkAnd($data, $args);
-            case 'or':
-                return self::checkOr($data, $args);
-            case 'not':
-                return !self::check($data, $args[0]);
-            default:
-                return self::checkField($data, $type, $args[0], $args[1]);
-        }
-    }
-    
-    /**
-     * Find prefix supported by ruleCheck
-     * return two value. first is rule, second is last part of string
-     * 
-     * @param string $str
-     * @return array
-     */
-    protected static function findRulePrefix(string $str) : array
-    {
-        $allRules = array_merge(self::STARED_RULES, self::RULES);
-        [$rule,$field] = StrHelper::findPrefix($str, $allRules, '=');
-        return [static::tryRuleAliase($rule), $field];
-    }
-    
-    /**
-     * If array of rules is in "simple format"
-     * convert it to full format
-     * @param array $rules
-     * @return array
-     */
-    protected static function tryPrepareSimpleRules(array $rules) : array
-    {
-        if(empty($rules) or isset($rules[0])) {
-            return $rules;
-        }
-        $result = ['and'];
-        foreach($rules as $fieldRule=>$arg2) {
-            [$rule, $arg1] = static::findRulePrefix($fieldRule);
-            $result[] = [$rule, $arg1, $arg2];
-        }
-        return $result;
-    }
-    
-    /**
-     * Check AND condition
-     * 
-     * @param mixed $data
-     * @param array $conditions
-     * @return bool
-     */
-    protected static function checkAnd($data, array $conditions) : bool
-    {
-        foreach($conditions as $line) {
-            if(!self::check($data,$line)) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
-     * Check OR condition
+     * Change rules aliase to main rule if it is aliase
      * 
-     * @param mixed $data
-     * @param array $conditions
-     * @return bool
+     * @param string $rule
+     * @return string
      */
-    protected static function checkOr($data, array $conditions) : bool
-    {
-        foreach($conditions as $line) {
-            if(self::check($data,$line)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check/compare some field by rule and some value
-     * 
-     * @param mixed $data
-     * @param string $staredRule
-     * @param mixed $arg1
-     * @param mixed $arg2
-     * @return bool
-     */
-    protected static function checkField($data, string $staredRule, $arg1, $arg2) : bool
-    {
-        [$rulePrefix, $rule] = StrHelper::findPrefix($staredRule, ['*']);
-        $value1 = $data->$arg1;
-        if($rulePrefix == '*') {
-            $value2 = $data->$arg2;
-        } else {
-            $value2 = $arg2;
-        }
-        return self::compareByRule($rule, $value1, $value2);
-    }
-
     protected static function tryRuleAliase(string $rule) : string
     {
         if(isset(self::RULES_ALIASES[$rule])) {
