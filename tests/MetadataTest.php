@@ -4,98 +4,17 @@
  * @license see license.txt
  */
 namespace drycart\data\tests;
-use drycart\data\MetaData;
+use drycart\data\MetaDataHelper;
 
 /**
  * @author mendel
  */
 class MetadataTest extends \PHPUnit\Framework\TestCase
 {
-    public function testDirectFields()
-    {
-        $helper = new MetaData(
-            dummy\DummyModel::class,
-            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        $fields = $helper->fields(true);
-        $this->assertIsArray($fields);
-        $this->assertCount(2, $fields);
-        $this->assertArrayHasKey('name', $fields);
-        $this->assertArrayHasKey('age', $fields);
-        
-        $this->assertIsArray($fields['name']);
-        $this->assertCount(1, $fields['name']);
-        $this->assertArrayHasKey('var', $fields['name']);
-        $this->assertEquals([['string','name']],$fields['name']['var']);
-        
-        $this->assertIsArray($fields['age']);
-        $this->assertCount(1, $fields['age']);
-        $this->assertArrayHasKey('var', $fields['age']);
-        $this->assertEquals([['int','age']],$fields['age']['var']);
-    }
-    public function testDirectMethods()
-    {
-        $helper = new MetaData(
-            dummy\DummyModel::class,
-            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        
-        $this->assertEquals(
-            $helper->methods(true),
-            [
-                'hydrate'=>['return'=>[['void']],'param'=>[['array', '$data']]],
-            ]
-        );
-    }
-    
-    public function testExtendedFields()
-    {
-        $helper = new MetaData(
-            dummy\DummyExtendedModel::class,
-            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        $fields = $helper->fields(true);
-        $this->assertIsArray($fields);
-        $this->assertCount(2, $fields);
-        $this->assertArrayHasKey('name', $fields);
-        $this->assertArrayHasKey('age', $fields);
-        
-        $this->assertIsArray($fields['name']);
-        $this->assertCount(1, $fields['name']);
-        $this->assertArrayHasKey('var', $fields['name']);
-        $this->assertEquals([['string','name']],$fields['name']['var']);
-        
-        $this->assertIsArray($fields['age']);
-        $this->assertCount(1, $fields['age']);
-        $this->assertArrayHasKey('var', $fields['age']);
-        $this->assertEquals([['int','age']],$fields['age']['var']);
-    }
-    
-    public function testExtendedMethods()
-    {
-        $helper = new MetaData(
-            dummy\DummyExtendedModel::class,
-            ['@var'=>'var','@param'=>'param', '@return'=>'return']);
-        
-        $this->assertEquals(
-            $helper->methods(true),
-            [
-                'hydrate'=>['return'=>[['void']],'param'=>[['array', '$data']]],
-            ]
-        );
-    }
-    
-    public function testClassRules()
-    {
-        $helper = new \drycart\data\MetaDataHelper();
-        $rules = $helper->classRules(dummy\DummyModel::class);
-        
-        $this->assertIsArray($rules);
-        $this->assertArrayHasKey('@author', $rules);
-        $this->assertEquals('mendel',$rules['@author'][0][0]);
-    }
-    
     public function testGetSet()
     {
-        // Yes, it just for 100% coverage
-        $helper = new \drycart\data\MetaDataHelper();
+        // Yes, it just for 100% coverage, but thanks to it I find some small bug :)
+        $helper = new MetaDataHelper();
         $config = [
             'classMeta' => [
                 "Description of DummyModel",
@@ -108,8 +27,87 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         ];
         $helper->setCache([dummy\DummyModel::class=>$config]);
         $rules = $helper->classRules(dummy\DummyModel::class);
-        var_dump($helper->getCache());
+        
         $this->assertEquals('max',$rules['@author'][0][0]);
         $this->assertEquals([dummy\DummyModel::class=>$config],$helper->getCache());
+    }
+    
+    public function testClassRules()
+    {
+        $helper = new MetaDataHelper();
+        $rules = $helper->classRules(dummy\DummyModel::class);
+        
+        $this->assertIsArray($rules);
+        $this->assertArrayHasKey('@author', $rules);
+        $this->assertEquals('mendel',$rules['@author'][0][0]);
+    }
+    
+    public function testDirectFields()
+    {
+        $helper = new MetaDataHelper();
+        $fields = $helper->fieldsRules(dummy\DummyModel::class);
+        
+        $this->assertIsArray($fields);
+        $this->assertCount(2, $fields);
+        $this->assertArrayHasKey('name', $fields);
+        $this->assertArrayHasKey('age', $fields);
+        
+        $this->assertIsArray($fields['name']);
+        $this->assertCount(1, $fields['name']);
+        $this->assertArrayHasKey('@var', $fields['name']);
+        $this->assertEquals([['string','name']],$fields['name']['@var']);
+        
+        $this->assertIsArray($fields['age']);
+        $this->assertCount(1, $fields['age']);
+        $this->assertArrayHasKey('@var', $fields['age']);
+        $this->assertEquals([['int','age']],$fields['age']['@var']);
+    }
+    
+    public function testDirectMethods()
+    {
+        $helper = new MetaDataHelper();
+        $methods = $helper->methodsRules(dummy\DummyModel::class);
+        
+        $this->assertIsArray($methods);
+        $this->assertCount(3, $methods);
+        $this->assertArrayHasKey('getSomeString', $methods);
+        $this->assertArrayHasKey('hydrate', $methods);
+        $this->assertArrayHasKey('dehydrate', $methods);
+        
+        $this->assertIsArray($methods['getSomeString']);
+        $this->assertCount(0, $methods['getSomeString']);
+        
+        $this->assertIsArray($methods['hydrate']);
+        $this->assertCount(3, $methods['hydrate']);
+        $this->assertArrayHasKey('@return', $methods['hydrate']);
+        $this->assertArrayHasKey('@param', $methods['hydrate']);
+        $this->assertEquals([['void']],$methods['hydrate']['@return']);
+        $this->assertEquals([['array','$data']],$methods['hydrate']['@param']);
+        
+        $this->assertIsArray($methods['dehydrate']);
+        $this->assertCount(3, $methods['dehydrate']);
+        $this->assertArrayHasKey('@return', $methods['dehydrate']);
+        $this->assertEquals([['array']],$methods['dehydrate']['@return']);
+    }
+    
+    public function testExtendedFields()
+    {
+        $helper = new MetaDataHelper();
+        $fields = $helper->fieldsRules(dummy\DummyExtendedModel::class);
+        
+        $this->assertIsArray($fields);
+        $this->assertCount(2, $fields);
+        $this->assertArrayHasKey('name', $fields);
+        $this->assertArrayHasKey('age', $fields);
+        
+        $this->assertIsArray($fields['name']);
+        $this->assertCount(1, $fields['name']);
+        $this->assertArrayHasKey('@var', $fields['name']);
+        $this->assertEquals([['string','name']],$fields['name']['@var']);
+        
+        $this->assertIsArray($fields['age']);
+        $this->assertCount(1, $fields['age']);
+        $this->assertArrayHasKey('@var', $fields['age']);
+        $this->assertEquals([['int','age']],$fields['age']['@var']);
     }
 }

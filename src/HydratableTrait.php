@@ -25,6 +25,11 @@ trait HydratableTrait
         }
     }
 
+    /**
+     * Dehydrate
+     * 
+     * @return array
+     */
     public function dehydrate(): array
     {
         $data = [];

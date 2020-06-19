@@ -11,8 +11,6 @@ namespace drycart\data;
  */
 class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 {
-    use CheckTrait;
-    
     protected $data;
     protected $safe = true;
 
@@ -61,6 +59,17 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
     public function __get($name)
     {
         return GetterHelper::get($this->data, $name, $this->safe);
+    }
+    
+    /**
+     * Check if data satisfies the condition
+     * 
+     * @param array $conditions
+     * @return bool
+     */
+    public function check(array $conditions) : bool
+    {
+        return CompareHelper::check($this, $conditions);
     }
 
     /**
