@@ -22,7 +22,7 @@ class HydratorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($model2->name, 'Max');
         $this->assertEquals($model2->age, 39);
         //
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage("Hyrdator will hydrate only instance of HydratableInterface");
         Hydrator::hydrate(dummy\DummyEnum::class, ['name'=>'Max','age'=>39]);
     }

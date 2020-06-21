@@ -19,9 +19,10 @@ class Hydrator
      * Hydrate
      * @param string $class
      * @param array $data
-     * @return mixed
+     * @return HydratableInterface
+     * @throws \UnexpectedValueException
      */
-    public static function hydrate(string $class, array $data)
+    public static function hydrate(string $class, array $data) : HydratableInterface
     {
         if(method_exists($class, 'make')) {
             $model = $class::make();
@@ -29,7 +30,7 @@ class Hydrator
             $model = new $class;
         }
         if(!is_a($model, HydratableInterface::class)) {
-            throw new \RuntimeException('Hyrdator will hydrate only instance of HydratableInterface');
+            throw new \UnexpectedValueException('Hyrdator will hydrate only instance of HydratableInterface');
         }
         $model->hydrate($data);
         return $model;        

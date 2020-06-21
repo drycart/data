@@ -8,7 +8,7 @@
 namespace drycart\data\Iterator;
 
 /**
- * Description of DehydrateIterator
+ * Iterator for dehydrate data from other iterator
  *
  * @author mendel
  */

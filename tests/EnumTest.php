@@ -35,4 +35,21 @@ class EnumTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(DummyEnum::valueTitles(),[0=>'Guest', 1=>'User', 10=>'Admin']);
         $this->assertEquals(DummyExtendedEnum::valueTitles(),[0=>'Guest', 1=>'Default user', 10=>'Admin', 100=>'Super admin']);
     }
+    
+    public function testTitlesIterator()
+    {
+        $arr = iterator_to_array(DummyEnum::titlesIterator());
+        $this->assertCount(3, $arr);
+        $this->assertEquals('GUEST', $arr[0]->key);
+        $this->assertEquals(0, $arr[0]->value);
+        $this->assertEquals('Guest', $arr[0]->title);
+        
+        $this->assertEquals('USER', $arr[1]->key);
+        $this->assertEquals(1, $arr[1]->value);
+        $this->assertEquals('User', $arr[1]->title);
+        
+        $this->assertEquals('ADMIN', $arr[2]->key);
+        $this->assertEquals(10, $arr[2]->value);
+        $this->assertEquals('Admin', $arr[2]->title);
+    }
 }

@@ -14,12 +14,16 @@ namespace drycart\data;
  */
 class CompareHelper
 {
-    // Dont change order - longer will be first (before other started from same symbols)
-    // @2DO: when updated StrHepler::findPrefix - refactor for remove aliases
+    /**
+     * List of main compare rules
+     */
     const RULES = [
-        '<=', '=<', '>=', '=>','!=','<>', '!like:','!contain:', '!in:', 'like:','contain:', 'in:', '<', '>', '!', '='
+        '<=', '>=', '!=', '!like:','!contain:', '!in:', 'like:','contain:', 'in:', '<', '>', '='
     ];
     
+    /**
+     * list of aliases for rules
+     */
     const RULES_ALIASES = [
         '=<' => '<=',
         '=>' => '>=',
@@ -30,6 +34,7 @@ class CompareHelper
     /**
      * Compare two values using orders list in format [field1, field2, !field3]
      * where ! is reverse ordering
+     * 
      * @param array $orders
      * @param type $value1
      * @param type $value2
@@ -64,7 +69,7 @@ class CompareHelper
      * @param mixed $value1
      * @param mixed $value2
      * @return bool
-     * @throws \Exception
+     * @throws \UnexpectedValueException
      */
     public static function compareByRule(string $rule, $value1, $value2) : bool
     {
@@ -94,7 +99,7 @@ class CompareHelper
             case '=':
                 return ($value1 == $value2);
             default:
-                throw new \RuntimeException('Unknown rule '.$rule);
+                throw new \UnexpectedValueException('Unknown rule '.$rule);
         }
     }
 

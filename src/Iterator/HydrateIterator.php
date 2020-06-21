@@ -35,6 +35,7 @@ class HydrateIterator extends \IteratorIterator
 
     /**
      * return hydrated object
+     * 
      * @return mixed
      */
     public function current()

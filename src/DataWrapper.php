@@ -6,29 +6,34 @@
 namespace drycart\data;
 
 /**
- * Wrapper for pretty access to field and check flexible logic conditions
+ * Wrapper for pretty access to field
  * Used for deep access to some data at some unknown data
  */
 class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 {
     protected $data;
     protected $safe = true;
+    protected $titleKey = null;
 
     /**
      * @param mixed $data Data for we access. Array, object etc...
-     * @param bool $safe if true - Exception for not exist fields
+     * @param bool $safe if true - Exception for not exist fields, else NULL
+     * @param string|null $titleKey if not null - used as key for title method
+     * @throws \UnexpectedValueException
      */
-    public function __construct($data, bool $safe = true)
+    public function __construct($data, bool $safe = true, ?string $titleKey = null)
     {
         if(!is_array($data) and ! is_object($data)) {
-            throw new \RuntimeException('DataWraper can wrap only array or object');
+            throw new \UnexpectedValueException('DataWraper can wrap only array or object');
         }
         $this->data = $data;
         $this->safe = $safe;
+        $this->titleKey = $titleKey;
     }
     
     /**
      * Magic proxy call to data
+     * 
      * @param string $name
      * @param array $arguments
      * @return mixed
@@ -41,6 +46,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 
     /**
      * Magic isset
+     * 
      * @param string $name
      * @return bool
      */
@@ -54,22 +60,11 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      * 
      * @param string $name name for access
      * @return mixed
-     * @throws \Exception
+     * @throws \UnexpectedValueException
      */
     public function __get($name)
     {
         return GetterHelper::get($this->data, $name, $this->safe);
-    }
-    
-    /**
-     * Check if data satisfies the condition
-     * 
-     * @param array $conditions
-     * @return bool
-     */
-    public function check(array $conditions) : bool
-    {
-        return CheckHelper::check($this, $conditions);
     }
 
     /**
@@ -84,6 +79,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
 
     /**
      * Json serialise data - here just data object/array
+     * 
      * @return object|array
      */
     public function jsonSerialize()
@@ -133,6 +129,12 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
         return $this->__get($offset);
     }
 
+    /**
+     * Human readable name for some field (by key)
+     * 
+     * @param string $key
+     * @return string
+     */
     public function fieldLabel(string $key): string
     {
         if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
@@ -142,17 +144,29 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
         }
     }
 
+    /**
+     * Dummy title if not exist
+     * 
+     * @return string
+     */
     public function title(): string
     {
-        if(is_array($this->data)) {
-            return 'Some array...';
-        } elseif(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
             return $this->data->title();
+        } elseif (!empty($this->titleKey)) {
+            return $this[$this->titleKey];
+        } elseif(is_array($this->data)) {
+            return 'Some array...';
         } else {
             return 'Object #'.spl_object_id($this->data);
         }
     }
 
+    /**
+     * Dummy fieldsInfo if not exist
+     * 
+     * @return array
+     */
     public function fieldsInfo(): array
     {
         if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {

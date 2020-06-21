@@ -42,7 +42,7 @@ class CompareHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(CompareHelper::compareByRule('in:', 'd', ['a','b','c']));
         $this->assertFalse(CompareHelper::compareByRule('!in:', 'b', ['a','b','c']));
         //
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage("Unknown rule notExistRule:");
         CompareHelper::compareByRule('notExistRule:', 'a', 'a');
     }

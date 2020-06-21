@@ -8,13 +8,15 @@
 namespace drycart\data;
 
 /**
- *
+ * Trait for hydrate/dehydrate methods
+ * 
  * @author mendel
  */
 trait HydratableTrait
 {
     /**
      * Hydrate
+     * 
      * @param array $data
      * @return void
      */

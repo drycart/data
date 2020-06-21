@@ -8,7 +8,7 @@
 namespace drycart\data;
 
 /**
- * Helper for simple compare checks
+ * Helper for flexible conditions 
  *
  * @author mendel
  */
@@ -42,6 +42,7 @@ class CheckHelper
     /**
      * If array of rules is in "simple format"
      * convert it to full format
+     * 
      * @param array $rules
      * @return array
      */
@@ -67,11 +68,18 @@ class CheckHelper
     public static function initAllRules() : void
     {
         if(empty(static::$allRules)) {
-            $rules = [];
             foreach(CompareHelper::RULES as $rule) {
-                $rules[] = '*'.$rule;
+                static::$allRules[] = '*'.$rule;
+                static::$allRules[] = $rule;
             }
-            static::$allRules = array_merge($rules, CompareHelper::RULES);
+            foreach(array_keys(CompareHelper::RULES_ALIASES) as $rule) {
+                static::$allRules[] = '*'.$rule;
+                static::$allRules[] = $rule;
+            }
+            // Sort by lenght
+            usort(static::$allRules, function(string $a, string $b) : int {
+                return strlen($b) <=> strlen($a); // for reversal result
+            });
         }
     }
     

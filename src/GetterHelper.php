@@ -32,7 +32,7 @@ class GetterHelper
      * @param string $name name for access
      * @param bool $safe if true - Exception for not exist fields
      * @return mixed
-     * @throws \Exception
+     * @throws \UnexpectedValueException
      */
     public static function get($data, string $name, bool $safe = true)
     {
@@ -91,7 +91,7 @@ class GetterHelper
      * @param string $key
      * @param bool $safe
      * @return mixed
-     * @throws \Exception
+     * @throws \UnexpectedValueException
      */
     protected static function subGet($data, string $key, bool $safe = true)
     {
@@ -107,7 +107,7 @@ class GetterHelper
         } elseif ((substr($key, -2) == '()') and method_exists($data, substr($key, 0, -2))) {
             return call_user_func_array([$data, substr($key, 0, -2)], []);
         } elseif ($safe) {
-            throw new \Exception("Bad field name $key");
+            throw new \UnexpectedValueException("Bad field name $key");
         } else {
             return null;
         }

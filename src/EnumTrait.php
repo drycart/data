@@ -7,7 +7,7 @@ namespace drycart\data;
  */
 
 /**
- * Abstract class for pretty use for list of constants and/or data arrays
+ * Trait for pretty use for list of constants and/or data arrays
  *
  * @author mendel
  */
@@ -15,6 +15,7 @@ trait EnumTrait
 {
     /**
      * Array for titles. Just default dummy for override if need
+     * 
      * @return array
      */
     static protected function titles() : array
@@ -24,6 +25,7 @@ trait EnumTrait
     
     /**
      * Main function. Return list of constants i.e. keys and values...
+     * 
      * @return array
      */
     static public function data() : array
@@ -34,7 +36,25 @@ trait EnumTrait
     }
     
     /**
+     * Get iterator for titles/keys/values
+     * 
+     * @return \Iterator
+     */
+    static public function titlesIterator() : \Iterator
+    {
+        $titles = static::titles();
+        foreach(static::data() as $key=>$value) {
+            yield new DataWrapper([
+                'key' => $key,
+                'value' => $value,
+                'title' => $titles[$key] ?? StrHelper::key2Label(strtolower($key))
+            ]);
+        }
+    }
+    
+    /**
      * Return all keys and his titles (defined at titles() or default generated)
+     * 
      * @return array
      */
     static public function keyTitles() : array
@@ -49,6 +69,7 @@ trait EnumTrait
     
     /**
      * Return all values and his titles (defined at titles() or default generated)
+     * 
      * @return array
      */
     static public function valueTitles() : array

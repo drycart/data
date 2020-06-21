@@ -76,9 +76,9 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         
         $this->assertIsArray($methods['getSomeString']);
         $this->assertCount(0, $methods['getSomeString']);
-        
+
         $this->assertIsArray($methods['hydrate']);
-        $this->assertCount(3, $methods['hydrate']);
+        $this->assertCount(4, $methods['hydrate']);
         $this->assertArrayHasKey('@return', $methods['hydrate']);
         $this->assertArrayHasKey('@param', $methods['hydrate']);
         $this->assertEquals([['void']],$methods['hydrate']['@return']);

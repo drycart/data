@@ -11,7 +11,7 @@ use drycart\data\DataWrapper;
  */
 class DataWrapperTest extends \PHPUnit\Framework\TestCase
 {
-    protected function prepareWrapper(bool $safe) : DataWrapper
+    protected function prepareWrapper(bool $safe, ?string $titleKey = null) : DataWrapper
     {
         $data = [
             'field1'=>'value1',
@@ -20,7 +20,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
             'array'=>['field1'=>'value1','field2'=>'value2'],
             'arrayObj'=> new \ArrayObject(['field1'=>'value1','field2'=>'value2'])
         ];
-        return new DataWrapper($data, $safe);
+        return new DataWrapper($data, $safe, $titleKey);
     }
     
     public function testSafe()
@@ -33,7 +33,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($wrapper['arrayObj.field1'], 'value1');
         $this->assertEquals($wrapper['arrayObj.count()'], 2);
         //
-        $this->expectException(\Exception::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage("Bad field name notExistField");        
         $wrapper['obj.notExistField'];
     }
@@ -94,19 +94,9 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $wrapper4 = new DataWrapper($wrapper);
         $this->assertEquals('Array obj count', $wrapper4->fieldLabel($field3));
         
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage("DataWraper can wrap only array or object");        
         new DataWrapper('some string');
-    }
-    
-    public function testCheck()
-    {
-        $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertTrue($wrapper->check(['=','field1', 'value1']));
-        $this->assertFalse($wrapper->check(['=','field1', 'wrongValue']));
-        $this->assertTrue($wrapper->check(['=','notExistField', null]));
-        $this->assertTrue($wrapper->check(['=','arrayObj.count()', 2]));
-        $this->assertTrue($wrapper->check(['>','arrayObj.count()', 1]));
     }
     
     public function testIterator()
@@ -158,8 +148,11 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
     
     public function testTitle()
     {
-        $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertEquals('Some array...',$wrapper->title());
+        $wrapper0 = $this->prepareWrapper(FALSE);
+        $this->assertEquals('Some array...',$wrapper0->title());
+        
+        $wrapper1 = $this->prepareWrapper(FALSE, 'field1');
+        $this->assertEquals('value1',$wrapper1->title());
         
         $arrayObj = new \ArrayObject(['field1'=>'value1']);
         $wrapper2 = new DataWrapper($arrayObj);

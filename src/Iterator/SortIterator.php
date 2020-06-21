@@ -17,12 +17,14 @@ class SortIterator extends \SplHeap
 {
     /**
      * Orders
+     * 
      * @var array
      */
     protected $orders = [];
     
     /**
      * Constructor
+     * 
      * @param \Traversable $iterator
      * @param array $orders
      */
@@ -38,6 +40,7 @@ class SortIterator extends \SplHeap
 
     /**
      * Compare two element using order rules
+     * 
      * @param type $value1
      * @param type $value2
      * @return int
