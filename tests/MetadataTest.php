@@ -69,20 +69,12 @@ class MetadataTest extends \PHPUnit\Framework\TestCase
         $methods = $helper->methodsRules(dummy\DummyModel::class);
         
         $this->assertIsArray($methods);
-        $this->assertCount(3, $methods);
+        $this->assertCount(2, $methods);
         $this->assertArrayHasKey('getSomeString', $methods);
-        $this->assertArrayHasKey('hydrate', $methods);
         $this->assertArrayHasKey('dehydrate', $methods);
         
         $this->assertIsArray($methods['getSomeString']);
         $this->assertCount(0, $methods['getSomeString']);
-
-        $this->assertIsArray($methods['hydrate']);
-        $this->assertCount(4, $methods['hydrate']);
-        $this->assertArrayHasKey('@return', $methods['hydrate']);
-        $this->assertArrayHasKey('@param', $methods['hydrate']);
-        $this->assertEquals([['void']],$methods['hydrate']['@return']);
-        $this->assertEquals([['array','$data']],$methods['hydrate']['@param']);
         
         $this->assertIsArray($methods['dehydrate']);
         $this->assertCount(3, $methods['dehydrate']);

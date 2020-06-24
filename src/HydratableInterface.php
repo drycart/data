@@ -19,9 +19,9 @@ interface HydratableInterface
      * Hydrate model by array of data
      * 
      * @param array $data
-     * @return void
+     * @return HydratableInterface
      */
-    public function hydrate(array $data) : void;
+    public static function hydrate(array $data) : self;
     
     /**
      * Dehydrate object to array

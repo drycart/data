@@ -41,6 +41,7 @@ class HydrateIterator extends \IteratorIterator
     public function current()
     {
         $data = parent::current();
-        return Hydrator::hydrate($this->modelClass, $data);
+        $class = $this->modelClass;
+        return $class::hydrate($data);
     }
 }

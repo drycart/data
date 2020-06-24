@@ -8,7 +8,7 @@
 namespace drycart\data;
 
 /**
- * Trait for hydrate/dehydrate methods
+ * Trait for dummy hydrate/dehydrate methods
  * 
  * @author mendel
  */
@@ -18,13 +18,15 @@ trait HydratableTrait
      * Hydrate
      * 
      * @param array $data
-     * @return void
+     * @return HydratableInterface
      */
-    public function hydrate(array $data) : void
+    public static function hydrate(array $data) : HydratableInterface
     {
+        $model = new static;
         foreach($data as $key=>$value) {
-            $this->$key = $value;
+            $model->$key = $value;
         }
+        return $model;
     }
 
     /**
