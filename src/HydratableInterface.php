@@ -21,7 +21,7 @@ interface HydratableInterface
      * @param array $data
      * @return HydratableInterface
      */
-    public static function hydrate(array $data) : self;
+    public static function hydrate(array $data) : HydratableInterface;
     
     /**
      * Dehydrate object to array
