@@ -31,7 +31,7 @@ class UpdateHelperTest extends \PHPUnit\Framework\TestCase
             'set:b'=>0,
             'min:c'=>0,
             'max:d'=>100,
-            'sum:e'=>5
+            'add:e'=>5
         ]);
         
         $this->assertEquals(2, $data['a']);

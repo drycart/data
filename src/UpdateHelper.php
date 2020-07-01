@@ -14,7 +14,7 @@ namespace drycart\data;
 class UpdateHelper
 {
     // Dont change order - longer will be first (before other started from same symbols)
-    const RULES = ['set:', 'sum:', 'max:', 'min:'];
+    const RULES = ['set:', 'add:', 'max:', 'min:'];
     
     public static function updateAllFields(&$data, array $changes) : void
     {
@@ -31,7 +31,7 @@ class UpdateHelper
             case 'set:':
                 $data[$fieldName] = $value;
                 break;
-            case 'sum:':
+            case 'add:':
                 $data[$fieldName] = ($current ?? 0) + $value;
                 break;
             case 'max:':

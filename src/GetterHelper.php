@@ -95,21 +95,48 @@ class GetterHelper
      */
     protected static function subGet($data, string $key, bool $safe = true)
     {
-        if (is_array($data)) { // Just array, because ArrayAccess can have his own logic as object field
-            $data = (object) $data;
-        }
-        //
-        if (isset($data->{$key})) { // simple
-            return $data->{$key};
-        } elseif (is_a($data, \ArrayAccess::class) and isset($data[$key])) { // for ArrayAccess obj
+        if (static::isArrayable($data) and isset($data[$key])) {
             return $data[$key];
-            // Methods magic...
-        } elseif ((substr($key, -2) == '()') and method_exists($data, substr($key, 0, -2))) {
-            return call_user_func_array([$data, substr($key, 0, -2)], []);
-        } elseif ($safe) {
-            throw new \UnexpectedValueException("Bad field name $key");
-        } else {
-            return null;
         }
+        
+        if (is_object($data) AND isset($data->{$key})) {
+            return $data->{$key};
+        }
+        
+        // Methods magic...
+        $method = static::tryGetMethodName($key);
+        if (!is_null($method) and method_exists($data, $method)) {
+            return call_user_func_array([$data, $method], []);
+        }
+        
+        if ($safe) {
+            throw new \UnexpectedValueException("Bad field name $key");
+        }
+        return null;
+    }
+    
+    /**
+     * Check if data is array or ArrayAccess
+     * @param type $data
+     * @return bool
+     */
+    protected static function isArrayable($data) : bool
+    {
+        return is_array($data) OR is_a($data, \ArrayAccess::class);
+    }
+    
+    /**
+     * Check if key is methods name (i.e. finished to "()")
+     * and return methods name
+     *  
+     * @param string $key
+     * @return string|null
+     */
+    protected static function tryGetMethodName(string $key) : ?string
+    {
+        if(substr($key, -2) == '()') {
+            return substr($key, 0, -2);
+        }
+        return null;
     }
 }
