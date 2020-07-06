@@ -25,6 +25,9 @@ class CheckHelper
      */
     public static function check($data, array $conditions) : bool
     {
+        if(empty($conditions)) {
+            return true;
+        }
         $args = self::tryPrepareSimpleRules($conditions);
         $type = array_shift($args);
         switch (strtolower($type)) {

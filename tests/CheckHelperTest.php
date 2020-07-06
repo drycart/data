@@ -27,6 +27,7 @@ class CheckHelperTest extends \PHPUnit\Framework\TestCase
     public function testCheckFieldDirect()
     {
         $wrapper = $this->prepareWrapper(FALSE);
+        $this->assertTrue(CheckHelper::check($wrapper, []));
         $this->assertTrue(CheckHelper::check($wrapper, ['=','field1', 'value1']));
         $this->assertFalse(CheckHelper::check($wrapper, ['=','field1', 'wrongValue']));
         $this->assertTrue(CheckHelper::check($wrapper, ['=','notExistField', null]));
