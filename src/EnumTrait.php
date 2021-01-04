@@ -103,4 +103,11 @@ trait EnumTrait
         return $data[$value] ?? null;
     }
     
+    static public function checkKey(string $key) : void
+    {
+        if(in_null(static::value($key))) {
+            throw \Exception();
+        }
+    }
+    
 }
