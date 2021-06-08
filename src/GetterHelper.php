@@ -7,6 +7,12 @@
 
 namespace drycart\data;
 
+use ArrayAccess;
+use ArrayIterator;
+use ArrayObject;
+use Traversable;
+use UnexpectedValueException;
+
 /**
  * Wrapper for pretty access to field
  * Used for deep access to some data at some unknown data
@@ -26,13 +32,31 @@ namespace drycart\data;
 class GetterHelper
 {
     /**
+     * Modifiers map
+     * @var array<string, callable>
+     */
+    protected static $modifiers = [];
+
+    /**
+     * Add some modifier at modifiers map
+     * used for configure modifiers
+     *
+     * @param string $id
+     * @param callable $modifier
+     */
+    public static function addModifier(string $id, callable $modifier) : void
+    {
+        self::$modifiers[$id] = $modifier;
+    }
+
+    /**
      * Get some data by pretty name
      * 
      * @param array|object $data data for pretty access
      * @param string $name name for access
      * @param bool $safe if true - Exception for not exist fields
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public static function get($data, string $name, bool $safe = true)
     {
@@ -47,16 +71,16 @@ class GetterHelper
      * Get iterator for data
      * 
      * @param mixed $data
-     * @return \Traversable
+     * @return Traversable
      */
-    public static function getIterator($data): \Traversable
+    public static function getIterator($data): Traversable
     {
-        if(is_a($data, \Traversable::class)) {
+        if(is_a($data, Traversable::class)) {
             return $data;
         } elseif(is_array($data)) {
-            return new \ArrayIterator($data);
+            return new ArrayIterator($data);
         } else {
-            return new \ArrayIterator((array) $data);
+            return new ArrayIterator((array) $data);
         }
     }
 
@@ -72,10 +96,10 @@ class GetterHelper
             return $data->keys();
         } elseif(is_array($data)) {
             return array_keys($data);
-        } elseif(is_a($data, \ArrayObject::class)) {
+        } elseif(is_a($data, ArrayObject::class)) {
             $arr = $data->getArrayCopy();
             return array_keys($arr);
-        } elseif(is_a($data, \Traversable::class)) {
+        } elseif(is_a($data, Traversable::class)) {
             $arr = iterator_to_array($data);
             return array_keys($arr);
         } else {
@@ -87,13 +111,38 @@ class GetterHelper
     /**
      * One level get
      * 
-     * @param type $data
+     * @param mixed $data
      * @param string $key
      * @param bool $safe
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     protected static function subGet($data, string $key, bool $safe = true)
+    {
+        $modifier = null;
+        if(StrHelper::contain($key, '#')) {
+            [$key, $modifier] = explode('#', $key, 2);
+        }
+        if(!empty($key)) {
+            $data = self::subGetRaw($data, $key, $safe);
+        }
+        if(!empty($modifier)) {
+            $modifierCallback = self::$modifiers[$modifier] ?? $modifier;
+            $data = call_user_func($modifierCallback, $data);
+        }
+        return $data;
+    }
+
+    /**
+     * Just get, no modifier etc
+     * 
+     * @param mixed $data
+     * @param string $key
+     * @param bool $safe
+     * @return mixed
+     * @throws UnexpectedValueException
+     */
+    protected static function subGetRaw($data, string $key, bool $safe = true)
     {
         if (static::isArrayable($data) and isset($data[$key])) {
             return $data[$key];
@@ -110,19 +159,19 @@ class GetterHelper
         }
         
         if ($safe) {
-            throw new \UnexpectedValueException("Bad field name $key");
+            throw new UnexpectedValueException("Bad field name $key");
         }
         return null;
     }
     
     /**
      * Check if data is array or ArrayAccess
-     * @param type $data
+     * @param mixed $data
      * @return bool
      */
     protected static function isArrayable($data) : bool
     {
-        return is_array($data) OR is_a($data, \ArrayAccess::class);
+        return is_array($data) OR is_a($data, ArrayAccess::class);
     }
     
     /**

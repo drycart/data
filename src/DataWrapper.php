@@ -5,11 +5,15 @@
  */
 namespace drycart\data;
 
+use ArrayAccess;
+use IteratorAggregate;
+use Traversable;
+
 /**
  * Wrapper for pretty access to field
  * Used for deep access to some data at some unknown data
  */
-class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
+class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 {
     protected $data;
     protected $safe = true;
@@ -23,9 +27,6 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function __construct($data, bool $safe = true, ?string $titleKey = null)
     {
-        if(!is_array($data) and ! is_object($data)) {
-            throw new \UnexpectedValueException('DataWraper can wrap only array or object');
-        }
         $this->data = $data;
         $this->safe = $safe;
         $this->titleKey = $titleKey;
@@ -90,9 +91,9 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
     /**
      * Get iterator
      * 
-     * @return \Traversable
+     * @return Traversable
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
         return GetterHelper::getIterator($this->data);
     }
@@ -110,7 +111,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
     /**
      * Sugar for array access is_set
      * 
-     * @param type $offset
+     * @param int|string $offset
      * @return bool
      */
     public function offsetExists($offset): bool
@@ -121,8 +122,8 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
     /**
      * Sugar ArrayAccess getter
      * 
-     * @param type $offset
-     * @return type
+     * @param int|string $offset
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -189,7 +190,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function offsetSet($offset, $value): void
     {
-        if(is_array($this->data) or is_a($this->data, \ArrayAccess::class)) {
+        if(is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
             $this->data[$offset] = $value;
         } else {
             $this->data->$offset = $value;
@@ -215,7 +216,7 @@ class DataWrapper implements ModelInterface, \IteratorAggregate, \ArrayAccess
      */
     public function __unset($name) : void
     {
-        if(is_array($this->data) or is_a($this->data, \ArrayAccess::class)) {
+        if(is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
             unset($this->data[$name]);
         } else {
             unset($this->data->$name);
