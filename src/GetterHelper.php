@@ -32,26 +32,8 @@ use UnexpectedValueException;
 class GetterHelper
 {
     /**
-     * Modifiers map
-     * @var array<string, callable>
-     */
-    protected static $modifiers = [];
-
-    /**
-     * Add some modifier at modifiers map
-     * used for configure modifiers
-     *
-     * @param string $id
-     * @param callable $modifier
-     */
-    public static function addModifier(string $id, callable $modifier) : void
-    {
-        self::$modifiers[$id] = $modifier;
-    }
-
-    /**
      * Get some data by pretty name
-     * 
+     *
      * @param array|object $data data for pretty access
      * @param string $name name for access
      * @param bool $safe if true - Exception for not exist fields
@@ -69,7 +51,7 @@ class GetterHelper
 
     /**
      * Get iterator for data
-     * 
+     *
      * @param mixed $data
      * @return Traversable
      */
@@ -86,7 +68,7 @@ class GetterHelper
 
     /**
      * Get keys list for data
-     * 
+     *
      * @param mixed $data
      * @return array
      */
@@ -110,7 +92,7 @@ class GetterHelper
 
     /**
      * One level get
-     * 
+     *
      * @param mixed $data
      * @param string $key
      * @param bool $safe
@@ -127,15 +109,14 @@ class GetterHelper
             $data = self::subGetRaw($data, $key, $safe);
         }
         if(!empty($modifier)) {
-            $modifierCallback = self::$modifiers[$modifier] ?? $modifier;
-            $data = call_user_func($modifierCallback, $data);
+            $data = ModifyHelper::modify($data, $modifier);
         }
         return $data;
     }
 
     /**
      * Just get, no modifier etc
-     * 
+     *
      * @param mixed $data
      * @param string $key
      * @param bool $safe
@@ -147,23 +128,23 @@ class GetterHelper
         if (static::isArrayable($data) and isset($data[$key])) {
             return $data[$key];
         }
-        
+
         if (is_object($data) AND isset($data->{$key})) {
             return $data->{$key};
         }
-        
+
         // Methods magic...
         $method = static::tryGetMethodName($key);
         if (!is_null($method) and method_exists($data, $method)) {
             return call_user_func_array([$data, $method], []);
         }
-        
+
         if ($safe) {
             throw new UnexpectedValueException("Bad field name $key");
         }
         return null;
     }
-    
+
     /**
      * Check if data is array or ArrayAccess
      * @param mixed $data
@@ -173,11 +154,11 @@ class GetterHelper
     {
         return is_array($data) OR is_a($data, ArrayAccess::class);
     }
-    
+
     /**
      * Check if key is methods name (i.e. finished to "()")
      * and return methods name
-     *  
+     *
      * @param string $key
      * @return string|null
      */

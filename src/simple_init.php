@@ -5,17 +5,17 @@
  */
 
 use Carbon\Carbon;
-use drycart\data\GetterHelper;
+use drycart\data\ModifyHelper;
 
 /*
  * Example fof config helpers
  * usage: require_once 'simple_init,php';
  */
 
-GetterHelper::addModifier('json', function($data) {
+ModifyHelper::addModifier('json', function($data) {
     return json_decode($data, true);
 });
-GetterHelper::addModifier('prettyTimeDiff', function($data) {
+ModifyHelper::addModifier('prettyTimeDiff', function($data) {
     $time = new Carbon($data);
     return $time->diffForHumans();
 });
