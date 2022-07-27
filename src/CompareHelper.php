@@ -53,7 +53,7 @@ class CompareHelper
                 $direction = -1;
             }
             if ($wrapper1[$field] != $wrapper2[$field]) {
-                return $direction * ($wrapper1[$field] < $wrapper2[$field] ? -1 : 1);                
+                return $direction * ($wrapper1[$field] > $wrapper2[$field] ? -1 : 1);
             }
         }
         return 0;

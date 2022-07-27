@@ -23,17 +23,17 @@ class IteratorsTest extends \PHPUnit\Framework\TestCase
         ]);
         $iterator = new SortIterator($data, ['score','age']);
         $arr = iterator_to_array($iterator);
-        
-        $this->assertEquals($arr[0]['name'], 'Anton');
+
+        $this->assertEquals($arr[0]['name'], 'Jonn');
         $this->assertEquals($arr[1]['name'], 'Max');
-        $this->assertEquals($arr[2]['name'], 'Jonn');
-        
+        $this->assertEquals($arr[2]['name'], 'Anton');
+
         $iterator = new SortIterator($data, ['age','!score']);
         $arr = iterator_to_array($iterator);
-        
-        $this->assertEquals($arr[0]['name'], 'Max');
+
+        $this->assertEquals($arr[0]['name'], 'Anton');
         $this->assertEquals($arr[1]['name'], 'Jonn');
-        $this->assertEquals($arr[2]['name'], 'Anton');
+        $this->assertEquals($arr[2]['name'], 'Max');
     }
     
     public function testFilterIterator()
