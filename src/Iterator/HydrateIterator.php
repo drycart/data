@@ -6,6 +6,7 @@
  */
 
 namespace drycart\data\Iterator;
+
 use drycart\data\Hydrator;
 
 /**
@@ -21,7 +22,7 @@ class HydrateIterator extends \IteratorIterator
      * @var string
      */
     protected $modelClass;
-    
+
     /**
      * Constructor
      * @param \Traversable $iterator
@@ -35,7 +36,7 @@ class HydrateIterator extends \IteratorIterator
 
     /**
      * return hydrated object
-     * 
+     *
      * @return mixed
      */
     public function current()

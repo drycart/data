@@ -9,21 +9,21 @@ namespace drycart\data;
 
 /**
  * Trait for dummy hydrate/dehydrate methods
- * 
+ *
  * @author mendel
  */
 trait HydratableTrait
 {
     /**
      * Hydrate
-     * 
+     *
      * @param array $data
      * @return HydratableInterface
      */
-    public static function hydrate(array $data) : HydratableInterface
+    public static function hydrate(array $data): HydratableInterface
     {
-        $model = new static;
-        foreach($data as $key=>$value) {
+        $model = new static();
+        foreach ($data as $key => $value) {
             $model->$key = $value;
         }
         return $model;
@@ -31,13 +31,13 @@ trait HydratableTrait
 
     /**
      * Dehydrate
-     * 
+     *
      * @return array
      */
     public function dehydrate(): array
     {
         $data = [];
-        foreach(GetterHelper::getKeys($this) as $key) {
+        foreach (GetterHelper::getKeys($this) as $key) {
             $data[$key] = $this->$key;
         }
         return $data;

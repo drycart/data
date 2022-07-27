@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  @copyright (c) 2019 Mendel <mendel@zzzlab.com>
  *  @license see license.txt
@@ -31,10 +32,10 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
         $this->safe = $safe;
         $this->titleKey = $titleKey;
     }
-    
+
     /**
      * Magic proxy call to data
-     * 
+     *
      * @param string $name
      * @param array $arguments
      * @return mixed
@@ -47,7 +48,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Magic isset
-     * 
+     *
      * @param string $name
      * @return bool
      */
@@ -58,7 +59,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Get some data by pretty name
-     * 
+     *
      * @param string $name name for access
      * @return mixed
      * @throws \UnexpectedValueException
@@ -70,7 +71,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Get count of data fields, just sugar for data methods
-     * 
+     *
      * @return int
      */
     public function count(): int
@@ -80,7 +81,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Json serialise data - here just data object/array
-     * 
+     *
      * @return object|array
      */
     public function jsonSerialize()
@@ -90,7 +91,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Get iterator
-     * 
+     *
      * @return Traversable
      */
     public function getIterator(): Traversable
@@ -100,7 +101,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Get keys list
-     * 
+     *
      * @return array
      */
     public function keys(): array
@@ -110,7 +111,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Sugar for array access is_set
-     * 
+     *
      * @param int|string $offset
      * @return bool
      */
@@ -121,7 +122,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Sugar ArrayAccess getter
-     * 
+     *
      * @param int|string $offset
      * @return mixed
      */
@@ -132,13 +133,13 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Human readable name for some field (by key)
-     * 
+     *
      * @param string $key
      * @return string
      */
     public function fieldLabel(string $key): string
     {
-        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+        if (is_object($this->data) and is_a($this->data, ModelInterface::class)) {
             return $this->data->fieldLabel($key);
         } else {
             return StrHelper::key2Label($key);
@@ -147,35 +148,35 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Dummy title if not exist
-     * 
+     *
      * @return string
      */
     public function title(): string
     {
-        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+        if (is_object($this->data) and is_a($this->data, ModelInterface::class)) {
             return $this->data->title();
         } elseif (!empty($this->titleKey)) {
             return $this[$this->titleKey];
-        } elseif(is_array($this->data)) {
+        } elseif (is_array($this->data)) {
             return 'Some array...';
         } else {
-            return 'Object #'.spl_object_id($this->data);
+            return 'Object #' . spl_object_id($this->data);
         }
     }
 
     /**
      * Dummy fieldsInfo if not exist
-     * 
+     *
      * @return array
      */
     public function fieldsInfo(): array
     {
-        if(is_object($this->data) and is_a($this->data, ModelInterface::class)) {
+        if (is_object($this->data) and is_a($this->data, ModelInterface::class)) {
             return $this->data->fieldsInfo();
         }
-        
+
         $info = [];
-        foreach($this->keys() as $key) {
+        foreach ($this->keys() as $key) {
             $info[$key] = [];
         }
         return $info;
@@ -183,14 +184,14 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Magic setter for ArrayAccess
-     * 
+     *
      * @param mixed $offset
      * @param mixed $value
      * @return void
      */
     public function offsetSet($offset, $value): void
     {
-        if(is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
+        if (is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
             $this->data[$offset] = $value;
         } else {
             $this->data->$offset = $value;
@@ -199,7 +200,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
 
     /**
      * Magic unset for ArrayAccess
-     * 
+     *
      * @param mixed $offset
      * @return void
      */
@@ -207,20 +208,19 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
     {
         unset($this->$offset);
     }
-    
+
     /**
      * Magic unset
-     * 
+     *
      * @param string $name
      * @return void
      */
-    public function __unset($name) : void
+    public function __unset($name): void
     {
-        if(is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
+        if (is_array($this->data) or is_a($this->data, ArrayAccess::class)) {
             unset($this->data[$name]);
         } else {
             unset($this->data->$name);
         }
     }
-
 }

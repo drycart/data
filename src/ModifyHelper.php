@@ -17,7 +17,7 @@ class ModifyHelper
      * @param string $id
      * @param callable $modifier
      */
-    public static function addModifier(string $id, callable $modifier) : void
+    public static function addModifier(string $id, callable $modifier): void
     {
         self::$modifiers[$id] = $modifier;
     }

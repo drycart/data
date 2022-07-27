@@ -17,14 +17,14 @@ class CompareHelper
     /**
      * List of main compare rules
      */
-    const RULES = [
+    public const RULES = [
         '<=', '>=', '!=', '!like:','!contain:', '!in:', 'like:','contain:', 'in:', '<', '>', '='
     ];
-    
+
     /**
      * list of aliases for rules
      */
-    const RULES_ALIASES = [
+    public const RULES_ALIASES = [
         '=<' => '<=',
         '=>' => '>=',
         '!' => '!=',
@@ -34,18 +34,18 @@ class CompareHelper
     /**
      * Compare two values using orders list in format [field1, field2, !field3]
      * where ! is reverse ordering
-     * 
+     *
      * @param array $orders
      * @param type $value1
      * @param type $value2
      * @return int
      */
-    public static function compareByOrders(array $orders, $value1, $value2) : int
+    public static function compareByOrders(array $orders, $value1, $value2): int
     {
         $wrapper1 = new DataWrapper($value1);
         $wrapper2 = new DataWrapper($value2);
-        foreach($orders as $order) {
-            if($order[0] == '!') {
+        foreach ($orders as $order) {
+            if ($order[0] == '!') {
                 $field = substr($order, 1);
                 $direction = 1;
             } else {
@@ -64,14 +64,14 @@ class CompareHelper
      * rule is one of: '<=', '=<', '>=', '=>', '!like:','!contain:', '!in:',
      * 'like:','contain:', 'in:', '<', '>', '!', '='
      * value1 and value2 is is parameters for compare
-     * 
+     *
      * @param string $rule
      * @param mixed $value1
      * @param mixed $value2
      * @return bool
      * @throws \UnexpectedValueException
      */
-    public static function compareByRule(string $rule, $value1, $value2) : bool
+    public static function compareByRule(string $rule, $value1, $value2): bool
     {
         switch (static::tryRuleAliase($rule)) {
             case '<=':
@@ -99,22 +99,22 @@ class CompareHelper
             case '=':
                 return ($value1 == $value2);
             default:
-                throw new \UnexpectedValueException('Unknown rule '.$rule);
+                throw new \UnexpectedValueException('Unknown rule ' . $rule);
         }
     }
 
     /**
      * Change rules aliase to main rule if it is aliase
-     * 
+     *
      * @param string $rule
      * @return string
      */
-    protected static function tryRuleAliase(string $rule) : string
+    protected static function tryRuleAliase(string $rule): string
     {
-        if(isset(self::RULES_ALIASES[$rule])) {
+        if (isset(self::RULES_ALIASES[$rule])) {
             return self::RULES_ALIASES[$rule];
         } else {
-            return $rule; 
+            return $rule;
         }
     }
 }

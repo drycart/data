@@ -57,9 +57,9 @@ class GetterHelper
      */
     public static function getIterator($data): Traversable
     {
-        if(is_a($data, Traversable::class)) {
+        if (is_a($data, Traversable::class)) {
             return $data;
-        } elseif(is_array($data)) {
+        } elseif (is_array($data)) {
             return new ArrayIterator($data);
         } else {
             return new ArrayIterator((array) $data);
@@ -72,16 +72,16 @@ class GetterHelper
      * @param mixed $data
      * @return array
      */
-    public static function getKeys($data) : array
+    public static function getKeys($data): array
     {
-        if(is_object($data) and is_a($data, ModelInterface::class)) {
+        if (is_object($data) and is_a($data, ModelInterface::class)) {
             return $data->keys();
-        } elseif(is_array($data)) {
+        } elseif (is_array($data)) {
             return array_keys($data);
-        } elseif(is_a($data, ArrayObject::class)) {
+        } elseif (is_a($data, ArrayObject::class)) {
             $arr = $data->getArrayCopy();
             return array_keys($arr);
-        } elseif(is_a($data, Traversable::class)) {
+        } elseif (is_a($data, Traversable::class)) {
             $arr = iterator_to_array($data);
             return array_keys($arr);
         } else {
@@ -102,13 +102,13 @@ class GetterHelper
     protected static function subGet($data, string $key, bool $safe = true)
     {
         $modifier = null;
-        if(StrHelper::contain($key, '#')) {
+        if (StrHelper::contain($key, '#')) {
             [$key, $modifier] = explode('#', $key, 2);
         }
-        if(!empty($key)) {
+        if (!empty($key)) {
             $data = self::subGetRaw($data, $key, $safe);
         }
-        if(!empty($modifier)) {
+        if (!empty($modifier)) {
             $data = ModifyHelper::modify($data, $modifier);
         }
         return $data;
@@ -129,7 +129,7 @@ class GetterHelper
             return $data[$key];
         }
 
-        if (is_object($data) AND isset($data->{$key})) {
+        if (is_object($data) and isset($data->{$key})) {
             return $data->{$key};
         }
 
@@ -150,9 +150,9 @@ class GetterHelper
      * @param mixed $data
      * @return bool
      */
-    protected static function isArrayable($data) : bool
+    protected static function isArrayable($data): bool
     {
-        return is_array($data) OR is_a($data, ArrayAccess::class);
+        return is_array($data) or is_a($data, ArrayAccess::class);
     }
 
     /**
@@ -162,9 +162,9 @@ class GetterHelper
      * @param string $key
      * @return string|null
      */
-    protected static function tryGetMethodName(string $key) : ?string
+    protected static function tryGetMethodName(string $key): ?string
     {
-        if(substr($key, -2) == '()') {
+        if (substr($key, -2) == '()') {
             return substr($key, 0, -2);
         }
         return null;

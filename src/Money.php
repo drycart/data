@@ -21,7 +21,7 @@ class Money
 {
     /**
      * Amount (integer, at "cents" format)
-     * @var int 
+     * @var int
      */
     protected $amount;
 
@@ -30,13 +30,13 @@ class Money
      * @var string
      */
     protected $currency;
-    
+
     /**
      * Exponent - array where key is currency, value - number of digits after dot
      * @var array
      */
-    protected static $exponent = ['USD'=>2, 'EUR'=>2, 'ILS'=>2];
-    
+    protected static $exponent = ['USD' => 2, 'EUR' => 2, 'ILS' => 2];
+
     /**
      * Currency used if it not selected
      * @var string
@@ -46,21 +46,21 @@ class Money
     /**
      * Constructor
      * if currency is null/empty => use default currency
-     * 
+     *
      * @param int $amount
      * @param string|null $currency
      */
-    public function __construct(int $amount, ?string $currency=null)
+    public function __construct(int $amount, ?string $currency = null)
     {
         $this->amount = $amount;
         $this->currency = strtoupper($currency ?? static::$defaultCurrency);
     }
-    
+
     /**
      * Get amount at "cents"
      * @return int
      */
-    public function getAmount() : int
+    public function getAmount(): int
     {
         return $this->amount;
     }
@@ -69,19 +69,19 @@ class Money
      * Get currency
      * @return string
      */
-    public function getCurrency() : string
+    public function getCurrency(): string
     {
         return $this->currency;
     }
-    
+
     /**
      * Init default currency and exponents
-     * 
+     *
      * @param array $exponent
      * @param string $defaultCurrency
      * @return void
      */
-    public static function init(array $exponent, string $defaultCurrency) : void
+    public static function init(array $exponent, string $defaultCurrency): void
     {
         static::$exponent = $exponent;
         static::$defaultCurrency = strtoupper($defaultCurrency);
@@ -91,12 +91,13 @@ class Money
      * Helper for instantiate money object from float value
      * best way - always use integer, but at data input we can take float,
      * so its sugar for it
-     * 
+     *
      * @param float $amount
      * @param string|null $currency
      * @return Money
      */
-    public static function fromFloat(float $amount, ?string $currency = null): Money {
+    public static function fromFloat(float $amount, ?string $currency = null): Money
+    {
         $currency = strtoupper($currency ?? static::$defaultCurrency);
         $amount *= pow(10, self::exponent($currency));
         return new Money($amount, $currency);
@@ -108,20 +109,22 @@ class Money
      * @return int
      * @throws OutOfBoundsException
      */
-    public static function exponent(string $currency): int {
+    public static function exponent(string $currency): int
+    {
         $currency = strtoupper($currency);
         if (empty(self::$exponent[$currency])) {
-            throw new OutOfBoundsException('Unknown currency: '.$currency);
+            throw new OutOfBoundsException('Unknown currency: ' . $currency);
         }
         return self::$exponent[$currency];
     }
-    
+
     /**
      * Get string format for amount, compatible to float
      * i.e. can be converted to float or used as is
      * @return string
      */
-    public function amountString(): string {
+    public function amountString(): string
+    {
         return number_format(
             $this->amount / pow(10, self::exponent($this->currency)),
             self::exponent($this->currency),
@@ -135,7 +138,8 @@ class Money
      * @2DO: add different formats/templates for each currency
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return number_format(
             $this->amount / pow(10, self::exponent($this->currency)),
             self::exponent($this->currency),
@@ -157,7 +161,8 @@ class Money
      * True if zero at account
      * @return bool
      */
-    public function isEmpty(): bool {
+    public function isEmpty(): bool
+    {
         return ($this->amount == 0);
     }
 
@@ -168,7 +173,7 @@ class Money
      * @return void
      * @throws UnexpectedValueException
      */
-    public static function checkCurrency(Money $x, Money $y) : void
+    public static function checkCurrency(Money $x, Money $y): void
     {
         if ($x->currency != $y->currency) {
             throw new UnexpectedValueException('Currency will be same');
@@ -223,27 +228,28 @@ class Money
         $amount = intdiv($this->amount, $y);
         return new Money($amount, $this->currency);
     }
-    
+
     /**
      * Returns remainder (modulo) of the division
      * @param int $y
      * @return Money
      * @throws DivisionByZeroError
      */
-    public function remainder(int $y) : Money
+    public function remainder(int $y): Money
     {
         $amount = $this->amount % $y;
         return new Money($amount, $this->currency);
     }
 
     /**
-     * 
+     *
      * @param Money $a
      * @param Money $b
      * @return Money
      * @throws UnexpectedValueException
      */
-    public static function min(Money $a, Money $b): Money {
+    public static function min(Money $a, Money $b): Money
+    {
         static::checkCurrency($a, $b);
         if ($a->amount < $b->amount) {
             return new Money($a->amount, $a->currency);
@@ -253,13 +259,14 @@ class Money
     }
 
     /**
-     * 
+     *
      * @param Money $a
      * @param Money $b
      * @return Money
      * @throws UnexpectedValueException
      */
-    public static function max(Money $a, Money $b): Money {
+    public static function max(Money $a, Money $b): Money
+    {
         static::checkCurrency($a, $b);
         if ($a->amount > $b->amount) {
             return new Money($a->amount, $a->currency);
@@ -275,7 +282,8 @@ class Money
      * @return int
      * @throws UnexpectedValueException
      */
-    public static function compare(Money $a, Money $b): int {
+    public static function compare(Money $a, Money $b): int
+    {
         static::checkCurrency($a, $b);
         return $a->amount <=> $b->amount;
     }
