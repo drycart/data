@@ -49,6 +49,7 @@ class SortIterator extends \SplHeap
      */
     protected function compare($value1, $value2): int
     {
-        return CompareHelper::compareByOrders($this->orders, $value1, $value2);
+        $helper = new CompareHelper();
+        return $helper->compareByOrders($this->orders, $value1, $value2);
     }
 }

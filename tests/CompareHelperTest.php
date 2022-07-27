@@ -17,34 +17,35 @@ class CompareHelperTest extends TestCase
 {    
     public function testCheckRule()
     {
-        $this->assertTrue(CompareHelper::compareByRule('<=', 100, 150));
-        $this->assertTrue(CompareHelper::compareByRule('>=', 100, 80));
-        $this->assertTrue(CompareHelper::compareByRule('<', 100, 150));
-        $this->assertTrue(CompareHelper::compareByRule('>', 100, 80));
-        $this->assertTrue(CompareHelper::compareByRule('=', 100, 100));
-        $this->assertTrue(CompareHelper::compareByRule('!=', 100, 1));
-        $this->assertTrue(CompareHelper::compareByRule('like:', 'Hello World!', 'Hello %!'));
-        $this->assertTrue(CompareHelper::compareByRule('!like:', 'Hello World!', 'Bye %!'));
-        $this->assertTrue(CompareHelper::compareByRule('contain:', ['a','b','c'], 'b'));
-        $this->assertTrue(CompareHelper::compareByRule('!contain:', ['a','b','c'], 'd'));
-        $this->assertTrue(CompareHelper::compareByRule('in:', 'b', ['a','b','c']));
-        $this->assertTrue(CompareHelper::compareByRule('!in:', 'd', ['a','b','c']));
+        $helper = new CompareHelper();
+        $this->assertTrue($helper->compareByRule('<=', 100, 150));
+        $this->assertTrue($helper->compareByRule('>=', 100, 80));
+        $this->assertTrue($helper->compareByRule('<', 100, 150));
+        $this->assertTrue($helper->compareByRule('>', 100, 80));
+        $this->assertTrue($helper->compareByRule('=', 100, 100));
+        $this->assertTrue($helper->compareByRule('!=', 100, 1));
+        $this->assertTrue($helper->compareByRule('like:', 'Hello World!', 'Hello %!'));
+        $this->assertTrue($helper->compareByRule('!like:', 'Hello World!', 'Bye %!'));
+        $this->assertTrue($helper->compareByRule('contain:', ['a','b','c'], 'b'));
+        $this->assertTrue($helper->compareByRule('!contain:', ['a','b','c'], 'd'));
+        $this->assertTrue($helper->compareByRule('in:', 'b', ['a','b','c']));
+        $this->assertTrue($helper->compareByRule('!in:', 'd', ['a','b','c']));
         //
-        $this->assertFalse(CompareHelper::compareByRule('<=', 100, 80));
-        $this->assertFalse(CompareHelper::compareByRule('>=', 100, 150));
-        $this->assertFalse(CompareHelper::compareByRule('<', 100, 80));
-        $this->assertFalse(CompareHelper::compareByRule('>', 100, 150));
-        $this->assertFalse(CompareHelper::compareByRule('=', 100, 1));
-        $this->assertFalse(CompareHelper::compareByRule('!=', 100, 100));
-        $this->assertFalse(CompareHelper::compareByRule('like:', 'Hello World!', 'Bue %!'));
-        $this->assertFalse(CompareHelper::compareByRule('!like:', 'Hello World!', 'Hello %!'));
-        $this->assertFalse(CompareHelper::compareByRule('contain:', ['a','b','c'], 'd'));
-        $this->assertFalse(CompareHelper::compareByRule('!contain:', ['a','b','c'], 'b'));
-        $this->assertFalse(CompareHelper::compareByRule('in:', 'd', ['a','b','c']));
-        $this->assertFalse(CompareHelper::compareByRule('!in:', 'b', ['a','b','c']));
+        $this->assertFalse($helper->compareByRule('<=', 100, 80));
+        $this->assertFalse($helper->compareByRule('>=', 100, 150));
+        $this->assertFalse($helper->compareByRule('<', 100, 80));
+        $this->assertFalse($helper->compareByRule('>', 100, 150));
+        $this->assertFalse($helper->compareByRule('=', 100, 1));
+        $this->assertFalse($helper->compareByRule('!=', 100, 100));
+        $this->assertFalse($helper->compareByRule('like:', 'Hello World!', 'Bue %!'));
+        $this->assertFalse($helper->compareByRule('!like:', 'Hello World!', 'Hello %!'));
+        $this->assertFalse($helper->compareByRule('contain:', ['a','b','c'], 'd'));
+        $this->assertFalse($helper->compareByRule('!contain:', ['a','b','c'], 'b'));
+        $this->assertFalse($helper->compareByRule('in:', 'd', ['a','b','c']));
+        $this->assertFalse($helper->compareByRule('!in:', 'b', ['a','b','c']));
         //
         $this->expectException(\UnexpectedValueException::class);
         $this->expectExceptionMessage("Unknown rule notExistRule:");
-        CompareHelper::compareByRule('notExistRule:', 'a', 'a');
+        $helper->compareByRule('notExistRule:', 'a', 'a');
     }
 }

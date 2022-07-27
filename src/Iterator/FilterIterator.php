@@ -9,6 +9,8 @@ namespace drycart\data\Iterator;
 
 use drycart\data\DataWrapper;
 use drycart\data\CheckHelper;
+use IteratorAggregate;
+use Traversable;
 
 /**
  * Filter data at iterator by condition
@@ -18,14 +20,17 @@ use drycart\data\CheckHelper;
 class FilterIterator extends \FilterIterator
 {
     protected $conditions = [];
+    /** @var CheckHelper  */
+    protected $helper;
 
-    public function __construct(\Traversable $iterator, array $conditions)
+    public function __construct(Traversable $iterator, array $conditions)
     {
-        if (is_a($iterator, \IteratorAggregate::class)) {
+        if (is_a($iterator, IteratorAggregate::class)) {
             $iterator = $iterator->getIterator();
         }
         parent::__construct($iterator);
         $this->conditions = $conditions;
+        $this->helper = new CheckHelper();
     }
 
     /**
@@ -36,6 +41,6 @@ class FilterIterator extends \FilterIterator
     public function accept(): bool
     {
         $wrapper = new DataWrapper($this->current());
-        return CheckHelper::check($wrapper, $this->conditions);
+        return $this->helper->check($wrapper, $this->conditions);
     }
 }

@@ -17,15 +17,15 @@ class UpdateHelper
     // Dont change order - longer will be first (before other started from same symbols)
     public const RULES = ['set:', 'add:', 'max:', 'min:'];
 
-    public static function updateAllFields(&$data, array $changes): void
+    public function update(&$data, array $changes): void
     {
         foreach ($changes as $key => $value) {
             [$rule, $fieldName] = StrHelper::findPrefix($key, static::RULES, 'set:');
-            static::updateField($data, $value, $rule, $fieldName);
+            $this->updateField($data, $value, $rule, $fieldName);
         }
     }
 
-    public static function updateField(&$data, $value, string $rule, string $fieldName): void
+    protected function updateField(&$data, $value, string $rule, string $fieldName): void
     {
         $current = $data[$fieldName];
         switch ($rule) {

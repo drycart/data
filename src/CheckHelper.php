@@ -16,6 +16,11 @@ class CheckHelper
 {
     protected static $allRules = [];
 
+    public function __construct()
+    {
+        $this->initAllRules();
+    }
+
     /**
      * Check if data satisfies the condition
      *
@@ -23,22 +28,22 @@ class CheckHelper
      * @param array $conditions
      * @return bool
      */
-    public static function check($data, array $conditions): bool
+    public function check($data, array $conditions): bool
     {
         if (empty($conditions)) {
             return true;
         }
-        $args = self::tryPrepareSimpleRules($conditions);
+        $args = $this->tryPrepareSimpleRules($conditions);
         $type = array_shift($args);
         switch (strtolower($type)) {
             case 'and':
-                return self::checkAnd($data, $args);
+                return $this->checkAnd($data, $args);
             case 'or':
-                return self::checkOr($data, $args);
+                return $this->checkOr($data, $args);
             case 'not':
-                return !self::check($data, $args[0]);
+                return !$this->check($data, $args[0]);
             default:
-                return self::checkField($data, $type, $args[0], $args[1]);
+                return $this->checkField($data, $type, $args[0], $args[1]);
         }
     }
 
@@ -49,9 +54,8 @@ class CheckHelper
      * @param array $rules
      * @return array
      */
-    protected static function tryPrepareSimpleRules(array $rules): array
+    protected function tryPrepareSimpleRules(array $rules): array
     {
-        self::initAllRules();
         if (empty($rules) or isset($rules[0])) {
             return $rules;
         }
@@ -68,7 +72,7 @@ class CheckHelper
      *
      * @return void
      */
-    public static function initAllRules(): void
+    protected function initAllRules(): void
     {
         if (empty(static::$allRules)) {
             foreach (CompareHelper::RULES as $rule) {
@@ -93,10 +97,10 @@ class CheckHelper
      * @param array $conditions
      * @return bool
      */
-    protected static function checkAnd($data, array $conditions): bool
+    protected function checkAnd($data, array $conditions): bool
     {
         foreach ($conditions as $line) {
-            if (!self::check($data, $line)) {
+            if (!$this->check($data, $line)) {
                 return false;
             }
         }
@@ -110,10 +114,10 @@ class CheckHelper
      * @param array $conditions
      * @return bool
      */
-    protected static function checkOr($data, array $conditions): bool
+    protected function checkOr($data, array $conditions): bool
     {
         foreach ($conditions as $line) {
-            if (self::check($data, $line)) {
+            if ($this->check($data, $line)) {
                 return true;
             }
         }
@@ -129,7 +133,7 @@ class CheckHelper
      * @param mixed $arg2
      * @return bool
      */
-    protected static function checkField($data, string $staredRule, $arg1, $arg2): bool
+    protected function checkField($data, string $staredRule, $arg1, $arg2): bool
     {
         [$rulePrefix, $rule] = StrHelper::findPrefix($staredRule, ['*']);
         $value1 = $data->$arg1;
@@ -138,6 +142,7 @@ class CheckHelper
         } else {
             $value2 = $arg2;
         }
-        return CompareHelper::compareByRule($rule, $value1, $value2);
+        $helper = new CompareHelper();
+        return $helper->compareByRule($rule, $value1, $value2);
     }
 }

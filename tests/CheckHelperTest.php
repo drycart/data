@@ -28,50 +28,53 @@ class CheckHelperTest extends TestCase
     public function testCheckFieldDirect()
     {
         $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertTrue(CheckHelper::check($wrapper, []));
-        $this->assertTrue(CheckHelper::check($wrapper, ['=','field1', 'value1']));
-        $this->assertFalse(CheckHelper::check($wrapper, ['=','field1', 'wrongValue']));
-        $this->assertTrue(CheckHelper::check($wrapper, ['=','notExistField', null]));
-        $this->assertTrue(CheckHelper::check($wrapper, ['=','arrayObj.count()', 2]));
-        $this->assertTrue(CheckHelper::check($wrapper, ['>','arrayObj.count()', 1]));
+        $checker = new CheckHelper();
+        $this->assertTrue($checker->check($wrapper, []));
+        $this->assertTrue($checker->check($wrapper, ['=','field1', 'value1']));
+        $this->assertFalse($checker->check($wrapper, ['=','field1', 'wrongValue']));
+        $this->assertTrue($checker->check($wrapper, ['=','notExistField', null]));
+        $this->assertTrue($checker->check($wrapper, ['=','arrayObj.count()', 2]));
+        $this->assertTrue($checker->check($wrapper, ['>','arrayObj.count()', 1]));
     }
     
     public function testCheckFieldRelated()
     {
         $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertTrue(CheckHelper::check($wrapper, ['*=','field1', 'array.field1']));
-        $this->assertFalse(CheckHelper::check($wrapper, ['*=','field1', 'notExistField']));
-        $this->assertTrue(CheckHelper::check($wrapper, ['*=','notExistField', 'notExistField2']));
-        $this->assertTrue(CheckHelper::check($wrapper, ['*=','arrayObj.count()', 'arrayObj.count()']));
-        $this->assertTrue(CheckHelper::check($wrapper, ['*>=','arrayObj.count()', 'arrayObj.count()']));
+        $checker = new CheckHelper();
+        $this->assertTrue($checker->check($wrapper, ['*=','field1', 'array.field1']));
+        $this->assertFalse($checker->check($wrapper, ['*=','field1', 'notExistField']));
+        $this->assertTrue($checker->check($wrapper, ['*=','notExistField', 'notExistField2']));
+        $this->assertTrue($checker->check($wrapper, ['*=','arrayObj.count()', 'arrayObj.count()']));
+        $this->assertTrue($checker->check($wrapper, ['*>=','arrayObj.count()', 'arrayObj.count()']));
     }
     
     public function testCheckLogical()
     {
         $wrapper = $this->prepareWrapper(FALSE);
-        $this->assertFalse(CheckHelper::check($wrapper, [
+        $checker = new CheckHelper();
+        $this->assertFalse($checker->check($wrapper, [
             'NOT',
             ['*=','field1', 'array.field1']
         ]));
-        $this->assertFalse(CheckHelper::check($wrapper, [
+        $this->assertFalse($checker->check($wrapper, [
             'AND',
             ['*=','field1', 'array.field1'],
             ['*>=','arrayObj.count()', 'arrayObj.count()'],
             ['*=','field1', 'notExistField']
         ]));
-        $this->assertTrue(CheckHelper::check($wrapper, [
+        $this->assertTrue($checker->check($wrapper, [
             'OR',
             ['*=','field1', 'array.field1'],
             ['*>=','arrayObj.count()', 'arrayObj.count()'],
             ['*=','field1', 'notExistField']
         ]));
-        $this->assertFalse(CheckHelper::check($wrapper, [
+        $this->assertFalse($checker->check($wrapper, [
             'OR',
             ['*!=','field1', 'array.field1'],
             ['*>','arrayObj.count()', 'arrayObj.count()'],
             ['*=','field1', 'notExistField']
         ]));
-        $this->assertTrue(CheckHelper::check($wrapper, [
+        $this->assertTrue($checker->check($wrapper, [
             'and',
             ['*=','field1', 'array.field1'],
             ['*>=','arrayObj.count()', 'arrayObj.count()'],
@@ -86,12 +89,12 @@ class CheckHelperTest extends TestCase
                 ['*=','field1', 'notExistField']
             ]
         ]));
-        $this->assertTrue(CheckHelper::check($wrapper, [
+        $this->assertTrue($checker->check($wrapper, [
             '*=field1' => 'array.field1',
             '*>=arrayObj.count()' => 'arrayObj.count()',
             '*<>field1' => 'notExistField'
         ]));
-        $this->assertTrue(CheckHelper::check($wrapper, [
+        $this->assertTrue($checker->check($wrapper, [
             'field1' => 'value1',
             '>=arrayObj.count()' => 1,
             '<>field1' => 'notExist'

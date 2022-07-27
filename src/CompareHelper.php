@@ -40,7 +40,7 @@ class CompareHelper
      * @param mixed $value2
      * @return int
      */
-    public static function compare($value1, $value2): int
+    public function compare($value1, $value2): int
     {
         if (is_a($value1, ComparableInterface::class)) {
             return $value1->compare($value2);
@@ -57,7 +57,7 @@ class CompareHelper
      * @param mixed $value2
      * @return int
      */
-    public static function compareByOrders(array $orders, $value1, $value2): int
+    public function compareByOrders(array $orders, $value1, $value2): int
     {
         $wrapper1 = new DataWrapper($value1);
         $wrapper2 = new DataWrapper($value2);
@@ -69,7 +69,7 @@ class CompareHelper
                 $field = $order;
                 $direction = 1;
             }
-            $compareResult = self::compare($wrapper1[$field], $wrapper2[$field]);
+            $compareResult = $this->compare($wrapper1[$field], $wrapper2[$field]);
             if ($compareResult != 0) {
                 return $direction * $compareResult;
             }
@@ -89,14 +89,14 @@ class CompareHelper
      * @return bool
      * @throws UnexpectedValueException
      */
-    public static function compareByRule(string $rule, $value1, $value2): bool
+    public function compareByRule(string $rule, $value1, $value2): bool
     {
-        switch (static::tryRuleAliase($rule)) {
+        switch ($this->tryRuleAliase($rule)) {
             case '<=':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult <= 0;
             case '>=':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult >= 0;
             case '!like:':
                 return !StrHelper::like($value1, $value2);
@@ -111,16 +111,16 @@ class CompareHelper
             case 'in:':
                 return in_array($value1, $value2);
             case '<':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult < 0;
             case '>':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult > 0;
             case '!=':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult != 0;
             case '=':
-                $compareResult = self::compare($value1, $value2);
+                $compareResult = $this->compare($value1, $value2);
                 return $compareResult == 0;
             default:
                 throw new UnexpectedValueException('Unknown rule ' . $rule);
@@ -133,7 +133,7 @@ class CompareHelper
      * @param string $rule
      * @return string
      */
-    protected static function tryRuleAliase(string $rule): string
+    protected function tryRuleAliase(string $rule): string
     {
         if (isset(self::RULES_ALIASES[$rule])) {
             return self::RULES_ALIASES[$rule];

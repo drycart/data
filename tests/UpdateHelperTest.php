@@ -8,13 +8,14 @@
 namespace drycart\data\tests;
 
 use drycart\data\UpdateHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Description of UpdateHelperTest
  *
  * @author mendel
  */
-class UpdateHelperTest extends \PHPUnit\Framework\TestCase
+class UpdateHelperTest extends TestCase
 {
     public function testUpdate()
     {
@@ -25,8 +26,10 @@ class UpdateHelperTest extends \PHPUnit\Framework\TestCase
             'd'=>100500,
             'e'=>10,
         ]);
+
+        $helper = new UpdateHelper();
     
-        UpdateHelper::updateAllFields($data, [
+        $helper->update($data, [
             'a'=>2,
             'set:b'=>0,
             'min:c'=>0,
@@ -39,8 +42,5 @@ class UpdateHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(-100, $data['c']);
         $this->assertEquals(100500, $data['d']);
         $this->assertEquals(15, $data['e']);
-        
-        $this->expectException(\Exception::class);
-        UpdateHelper::updateField($data, 'someValue', 'notExistRule:', 'a');
     }
 }
