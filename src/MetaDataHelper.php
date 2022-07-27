@@ -7,6 +7,8 @@
 
 namespace drycart\data;
 
+use ReflectionClass;
+
 /**
  * Metadata for some class
  * i.e. some data from comments for class, fields, methods
@@ -49,7 +51,7 @@ class MetaDataHelper
     public function classMeta(string $className): array
     {
         if (!isset($this->cache[$className][__FUNCTION__])) {
-            $classReflector = new \ReflectionClass($className);
+            $classReflector = new ReflectionClass($className);
             $doc = $classReflector->getDocComment();
             $this->cache[$className][__FUNCTION__] = StrHelper::parseDocComment($doc);
         }
@@ -81,7 +83,7 @@ class MetaDataHelper
     {
         if (!isset($this->cache[$className][__FUNCTION__])) {
             $this->cache[$className][__FUNCTION__] = [];
-            $classReflector = new \ReflectionClass($className);
+            $classReflector = new ReflectionClass($className);
             foreach ($classReflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $line) {
                 if (!$line->isStatic()) {
                     $doc = $line->getDocComment();
@@ -117,7 +119,7 @@ class MetaDataHelper
     {
         if (!isset($this->cache[$className][__FUNCTION__])) {
             $this->cache[$className][__FUNCTION__] = [];
-            $classReflector = new \ReflectionClass($className);
+            $classReflector = new ReflectionClass($className);
             foreach ($classReflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $line) {
                 if (!$line->isStatic()) {
                     $doc = $line->getDocComment();

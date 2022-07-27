@@ -7,6 +7,10 @@ namespace drycart\data;
  *  @license see license.txt
  */
 
+use Exception;
+use Iterator;
+use UnexpectedValueException;
+
 /**
  * Trait for pretty use for list of constants and/or data arrays
  *
@@ -39,9 +43,9 @@ trait EnumTrait
     /**
      * Get iterator for titles/keys/values
      *
-     * @return \Iterator
+     * @return Iterator
      */
-    public static function titlesIterator(): \Iterator
+    public static function titlesIterator(): Iterator
     {
         $titles = static::titles();
         foreach (static::data() as $key => $value) {
@@ -106,8 +110,8 @@ trait EnumTrait
 
     public static function checkKey(string $key): void
     {
-        if (in_null(static::value($key))) {
-            throw \Exception();
+        if (is_null(static::value($key))) {
+            throw new UnexpectedValueException();
         }
     }
 }

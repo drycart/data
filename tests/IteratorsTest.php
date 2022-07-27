@@ -8,11 +8,12 @@ use drycart\data\Iterator\SortIterator;
 use drycart\data\Iterator\FilterIterator;
 use drycart\data\Iterator\HydrateIterator;
 use drycart\data\Iterator\DehydrateIterator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author mendel
  */
-class IteratorsTest extends \PHPUnit\Framework\TestCase
+class IteratorsTest extends TestCase
 {
     public function testSortIterator()
     {

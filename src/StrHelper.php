@@ -229,7 +229,7 @@ class StrHelper
     /**
      * Make string from template
      * @param string $template
-     * @param type $data
+     * @param mixed $data
      * @return string
      */
     public static function templateToString(string $template, $data = []): string

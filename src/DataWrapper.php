@@ -9,6 +9,7 @@ namespace drycart\data;
 use ArrayAccess;
 use IteratorAggregate;
 use Traversable;
+use UnexpectedValueException;
 
 /**
  * Wrapper for pretty access to field
@@ -24,7 +25,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
      * @param mixed $data Data for we access. Array, object etc...
      * @param bool $safe if true - Exception for not exist fields, else NULL
      * @param string|null $titleKey if not null - used as key for title method
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function __construct($data, bool $safe = true, ?string $titleKey = null)
     {
@@ -62,7 +63,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
      *
      * @param string $name name for access
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function __get($name)
     {

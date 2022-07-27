@@ -5,11 +5,12 @@
  */
 namespace drycart\data\tests;
 use drycart\data\MetaDataHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author mendel
  */
-class MetadataTest extends \PHPUnit\Framework\TestCase
+class MetadataTest extends TestCase
 {
     public function testGetSet()
     {

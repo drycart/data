@@ -36,8 +36,8 @@ class CompareHelper
      * where ! is reverse ordering
      *
      * @param array $orders
-     * @param type $value1
-     * @param type $value2
+     * @param mixed $value1
+     * @param mixed $value2
      * @return int
      */
     public static function compareByOrders(array $orders, $value1, $value2): int
