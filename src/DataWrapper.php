@@ -160,7 +160,7 @@ class DataWrapper implements ModelInterface, IteratorAggregate, ArrayAccess
         } elseif (is_array($this->data)) {
             return 'Some array...';
         } else {
-            return 'Object #' . spl_object_id($this->data);
+            return 'Object #' . spl_object_hash($this->data);
         }
     }
 
