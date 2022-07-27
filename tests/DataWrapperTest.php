@@ -4,12 +4,15 @@
  * @license see license.txt
  */
 namespace drycart\data\tests;
+use ArrayObject;
 use drycart\data\DataWrapper;
+use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 /**
  * @author mendel
  */
-class DataWrapperTest extends \PHPUnit\Framework\TestCase
+class DataWrapperTest extends TestCase
 {
     protected function prepareWrapper(bool $safe, ?string $titleKey = null) : DataWrapper
     {
@@ -18,7 +21,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
             'field2'=>'value2',
             'obj'=>(object) ['field1'=>'value1','field2'=>'value2'],
             'array'=>['field1'=>'value1','field2'=>'value2'],
-            'arrayObj'=> new \ArrayObject(['field1'=>'value1','field2'=>'value2'])
+            'arrayObj'=> new ArrayObject(['field1'=>'value1','field2'=>'value2'])
         ];
         return new DataWrapper($data, $safe, $titleKey);
     }
@@ -33,7 +36,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($wrapper['arrayObj.field1'], 'value1');
         $this->assertEquals($wrapper['arrayObj.count()'], 2);
         //
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage("Bad field name notExistField");        
         $wrapper['obj.notExistField'];
     }
@@ -78,7 +81,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('some string', $wrapper['someField']);
         
         $this->assertEquals($wrapper->arrayObj->count(), 2);
-        $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1','field2'=>'value2']));
+        $wrapper2 = new DataWrapper(new ArrayObject(['field1'=>'value1','field2'=>'value2']));
         $this->assertEquals($wrapper2->count(), 2);
         $this->assertEquals(json_encode(['field1'=>'value1','field2'=>'value2']), json_encode($wrapper2));
         
@@ -93,10 +96,11 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Array obj count', $wrapper->fieldLabel($field3));
         $wrapper4 = new DataWrapper($wrapper);
         $this->assertEquals('Array obj count', $wrapper4->fieldLabel($field3));
-        
-        $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage("DataWraper can wrap only array or object");        
-        new DataWrapper('some string');
+
+        require_once dirname(__DIR__, 1).'/src/simple_init.php';
+        $wrapper5 = new DataWrapper(json_encode(['field1'=>'value1','field2'=>'value2']));
+        $this->assertEquals( 'value1', $wrapper5['#json.field1']);
+        $this->assertEquals(json_encode(['field1'=>'value1','field2'=>'value2']), json_encode($wrapper5['#json']));
     }
     
     public function testIterator()
@@ -106,7 +110,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('field1', $array);
         $this->assertEquals('value1',$array['field1']);
         
-        $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1']));
+        $wrapper2 = new DataWrapper(new ArrayObject(['field1'=>'value1']));
         $array2 = iterator_to_array($wrapper2);
         $this->assertArrayHasKey('field1', $array2);
         $this->assertEquals('value1',$array2['field1']);
@@ -124,7 +128,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
             'field1','field2','obj','array','arrayObj'
         ],$wrapper->keys());
         
-        $wrapper2 = new DataWrapper(new \ArrayObject(['field1'=>'value1']));
+        $wrapper2 = new DataWrapper(new ArrayObject(['field1'=>'value1']));
         $this->assertEquals([
             'field1'
         ],$wrapper2->keys());
@@ -134,7 +138,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
             'field1'
         ],$wrapper3->keys());
         
-        $arrayObj = new \ArrayObject(['field1'=>'value1']);
+        $arrayObj = new ArrayObject(['field1'=>'value1']);
         $wrapper4 = new DataWrapper($arrayObj->getIterator());
         $this->assertEquals([
             'field1'
@@ -154,7 +158,7 @@ class DataWrapperTest extends \PHPUnit\Framework\TestCase
         $wrapper1 = $this->prepareWrapper(FALSE, 'field1');
         $this->assertEquals('value1',$wrapper1->title());
         
-        $arrayObj = new \ArrayObject(['field1'=>'value1']);
+        $arrayObj = new ArrayObject(['field1'=>'value1']);
         $wrapper2 = new DataWrapper($arrayObj);
         $this->assertEquals('Object #'.spl_object_id($arrayObj),$wrapper2->title());
         
