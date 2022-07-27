@@ -7,6 +7,8 @@
 
 namespace drycart\data;
 
+use UnexpectedValueException;
+
 /**
  * Helper for simple compare checks
  *
@@ -32,6 +34,21 @@ class CompareHelper
     ];
 
     /**
+     * Compare two values, scalar or Comparable
+     *
+     * @param mixed $value1
+     * @param mixed $value2
+     * @return int
+     */
+    public static function compare($value1, $value2): int
+    {
+        if (is_a($value1, ComparableInterface::class)) {
+            return $value1->compare($value2);
+        }
+        return $value1 <=> $value2;
+    }
+
+    /**
      * Compare two values using orders list in format [field1, field2, !field3]
      * where ! is reverse ordering
      *
@@ -47,13 +64,14 @@ class CompareHelper
         foreach ($orders as $order) {
             if ($order[0] == '!') {
                 $field = substr($order, 1);
-                $direction = 1;
+                $direction = -1;
             } else {
                 $field = $order;
-                $direction = -1;
+                $direction = 1;
             }
-            if ($wrapper1[$field] != $wrapper2[$field]) {
-                return $direction * ($wrapper1[$field] > $wrapper2[$field] ? -1 : 1);
+            $compareResult = self::compare($wrapper1[$field], $wrapper2[$field]);
+            if ($compareResult != 0) {
+                return $direction * $compareResult;
             }
         }
         return 0;
@@ -69,15 +87,17 @@ class CompareHelper
      * @param mixed $value1
      * @param mixed $value2
      * @return bool
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public static function compareByRule(string $rule, $value1, $value2): bool
     {
         switch (static::tryRuleAliase($rule)) {
             case '<=':
-                return ($value1 <= $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult <= 0;
             case '>=':
-                return ($value1 >= $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult >= 0;
             case '!like:':
                 return !StrHelper::like($value1, $value2);
             case '!in:':
@@ -91,15 +111,19 @@ class CompareHelper
             case 'in:':
                 return in_array($value1, $value2);
             case '<':
-                return ($value1 < $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult < 0;
             case '>':
-                return ($value1 > $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult > 0;
             case '!=':
-                return ($value1 != $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult != 0;
             case '=':
-                return ($value1 == $value2);
+                $compareResult = self::compare($value1, $value2);
+                return $compareResult == 0;
             default:
-                throw new \UnexpectedValueException('Unknown rule ' . $rule);
+                throw new UnexpectedValueException('Unknown rule ' . $rule);
         }
     }
 

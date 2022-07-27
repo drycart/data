@@ -103,5 +103,8 @@ class MoneyTest extends TestCase
         $this->assertEquals(71, $moneyIlsMax->getAmount());
         $this->assertEquals('ILS', $moneyIlsMax->getCurrency());
         $this->assertNotEquals(spl_object_hash($moneyIls4),spl_object_hash($moneyIlsMax));
+
+
+
     }
 }

@@ -17,7 +17,7 @@ use UnexpectedValueException;
  *
  * @author mendel
  */
-class Money
+class Money implements ComparableInterface
 {
     /**
      * Amount (integer, at "cents" format)
@@ -276,15 +276,16 @@ class Money
     }
 
     /**
-     *
-     * @param Money $a
-     * @param Money $b
+     * @param object $b
      * @return int
      * @throws UnexpectedValueException
      */
-    public static function compare(Money $a, Money $b): int
+    public function compare($b): int
     {
-        static::checkCurrency($a, $b);
-        return $a->amount <=> $b->amount;
+        if (!is_a($b, self::class)) {
+            throw new UnexpectedValueException('Can compare only witch Money');
+        }
+        static::checkCurrency($this, $b);
+        return $this->amount <=> $b->amount;
     }
 }
