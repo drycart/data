@@ -8,32 +8,41 @@ use drycart\data\Iterator\SortIterator;
 use drycart\data\Iterator\FilterIterator;
 use drycart\data\Iterator\HydrateIterator;
 use drycart\data\Iterator\DehydrateIterator;
+use drycart\data\Money;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author mendel
  */
-class IteratorsTest extends \PHPUnit\Framework\TestCase
+class IteratorsTest extends TestCase
 {
     public function testSortIterator()
     {
         $data = new \ArrayObject([
-            ['name'=>'Max','age'=>39,'score'=>12],
-            ['name'=>'Jonn','age'=>18,'score'=>8],
-            ['name'=>'Anton','age'=>18,'score'=>36],
+            ['name'=>'Max','age'=>39,'score'=>12, 'salary' =>Money::fromFloat(150, 'USD')],
+            ['name'=>'Jonn','age'=>18,'score'=>8, 'salary' =>Money::fromFloat(50, 'USD')],
+            ['name'=>'Anton','age'=>18,'score'=>36, 'salary' =>Money::fromFloat(25, 'USD')],
         ]);
         $iterator = new SortIterator($data, ['score','age']);
         $arr = iterator_to_array($iterator);
-        
-        $this->assertEquals($arr[0]['name'], 'Anton');
+
+        $this->assertEquals($arr[0]['name'], 'Jonn');
         $this->assertEquals($arr[1]['name'], 'Max');
-        $this->assertEquals($arr[2]['name'], 'Jonn');
-        
+        $this->assertEquals($arr[2]['name'], 'Anton');
+
         $iterator = new SortIterator($data, ['age','!score']);
         $arr = iterator_to_array($iterator);
-        
-        $this->assertEquals($arr[0]['name'], 'Max');
+
+        $this->assertEquals($arr[0]['name'], 'Anton');
         $this->assertEquals($arr[1]['name'], 'Jonn');
-        $this->assertEquals($arr[2]['name'], 'Anton');
+        $this->assertEquals($arr[2]['name'], 'Max');
+
+        $iterator = new SortIterator($data, ['salary']);
+        $arr = iterator_to_array($iterator);
+
+        $this->assertEquals($arr[0]['name'], 'Anton');
+        $this->assertEquals($arr[1]['name'], 'Jonn');
+        $this->assertEquals($arr[2]['name'], 'Max');
     }
     
     public function testFilterIterator()

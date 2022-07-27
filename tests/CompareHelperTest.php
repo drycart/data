@@ -5,6 +5,7 @@
  */
 namespace drycart\data\tests;
 use drycart\data\CompareHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @2DO: add test for compareByOrders
@@ -12,7 +13,7 @@ use drycart\data\CompareHelper;
  * 
  * @author mendel
  */
-class CompareHelperTest extends \PHPUnit\Framework\TestCase
+class CompareHelperTest extends TestCase
 {    
     public function testCheckRule()
     {

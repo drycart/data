@@ -8,24 +8,24 @@
 namespace drycart\data;
 
 /**
- * Helper for flexible conditions 
+ * Helper for flexible conditions
  *
  * @author mendel
  */
 class CheckHelper
 {
     protected static $allRules = [];
-    
+
     /**
      * Check if data satisfies the condition
-     * 
+     *
      * @param mixed $data
      * @param array $conditions
      * @return bool
      */
-    public static function check($data, array $conditions) : bool
+    public static function check($data, array $conditions): bool
     {
-        if(empty($conditions)) {
+        if (empty($conditions)) {
             return true;
         }
         $args = self::tryPrepareSimpleRules($conditions);
@@ -41,22 +41,22 @@ class CheckHelper
                 return self::checkField($data, $type, $args[0], $args[1]);
         }
     }
-    
+
     /**
      * If array of rules is in "simple format"
      * convert it to full format
-     * 
+     *
      * @param array $rules
      * @return array
      */
-    protected static function tryPrepareSimpleRules(array $rules) : array
+    protected static function tryPrepareSimpleRules(array $rules): array
     {
         self::initAllRules();
-        if(empty($rules) or isset($rules[0])) {
+        if (empty($rules) or isset($rules[0])) {
             return $rules;
         }
         $result = ['and'];
-        foreach($rules as $fieldRule=>$arg2) {
+        foreach ($rules as $fieldRule => $arg2) {
             [$rule, $arg1] = StrHelper::findPrefix($fieldRule, static::$allRules, '=');
             $result[] = [$rule, $arg1, $arg2];
         }
@@ -65,38 +65,38 @@ class CheckHelper
 
     /**
      * Init list of rules if not initialized
-     * 
+     *
      * @return void
      */
-    public static function initAllRules() : void
+    public static function initAllRules(): void
     {
-        if(empty(static::$allRules)) {
-            foreach(CompareHelper::RULES as $rule) {
-                static::$allRules[] = '*'.$rule;
+        if (empty(static::$allRules)) {
+            foreach (CompareHelper::RULES as $rule) {
+                static::$allRules[] = '*' . $rule;
                 static::$allRules[] = $rule;
             }
-            foreach(array_keys(CompareHelper::RULES_ALIASES) as $rule) {
-                static::$allRules[] = '*'.$rule;
+            foreach (array_keys(CompareHelper::RULES_ALIASES) as $rule) {
+                static::$allRules[] = '*' . $rule;
                 static::$allRules[] = $rule;
             }
             // Sort by lenght
-            usort(static::$allRules, function(string $a, string $b) : int {
+            usort(static::$allRules, function (string $a, string $b): int {
                 return strlen($b) <=> strlen($a); // for reversal result
             });
         }
     }
-    
+
     /**
      * Check AND condition
-     * 
+     *
      * @param mixed $data
      * @param array $conditions
      * @return bool
      */
-    protected static function checkAnd($data, array $conditions) : bool
+    protected static function checkAnd($data, array $conditions): bool
     {
-        foreach($conditions as $line) {
-            if(!self::check($data,$line)) {
+        foreach ($conditions as $line) {
+            if (!self::check($data, $line)) {
                 return false;
             }
         }
@@ -105,15 +105,15 @@ class CheckHelper
 
     /**
      * Check OR condition
-     * 
+     *
      * @param mixed $data
      * @param array $conditions
      * @return bool
      */
-    protected static function checkOr($data, array $conditions) : bool
+    protected static function checkOr($data, array $conditions): bool
     {
-        foreach($conditions as $line) {
-            if(self::check($data,$line)) {
+        foreach ($conditions as $line) {
+            if (self::check($data, $line)) {
                 return true;
             }
         }
@@ -122,18 +122,18 @@ class CheckHelper
 
     /**
      * Check/compare some field by rule and some value
-     * 
+     *
      * @param mixed $data
      * @param string $staredRule
      * @param mixed $arg1
      * @param mixed $arg2
      * @return bool
      */
-    protected static function checkField($data, string $staredRule, $arg1, $arg2) : bool
+    protected static function checkField($data, string $staredRule, $arg1, $arg2): bool
     {
         [$rulePrefix, $rule] = StrHelper::findPrefix($staredRule, ['*']);
         $value1 = $data->$arg1;
-        if($rulePrefix == '*') {
+        if ($rulePrefix == '*') {
             $value2 = $data->$arg2;
         } else {
             $value2 = $arg2;

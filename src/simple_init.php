@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  @copyright (c) 2021 Mendel <mendel@zzzlab.com>
  *  @license see license.txt
@@ -12,10 +13,10 @@ use drycart\data\ModifyHelper;
  * usage: require_once 'simple_init,php';
  */
 
-ModifyHelper::addModifier('json', function($data) {
+ModifyHelper::addModifier('json', function ($data) {
     return json_decode($data, true);
 });
-ModifyHelper::addModifier('prettyTimeDiff', function($data) {
+ModifyHelper::addModifier('prettyTimeDiff', function ($data) {
     $time = new Carbon($data);
     return $time->diffForHumans();
 });

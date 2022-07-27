@@ -6,7 +6,9 @@
  */
 
 namespace drycart\data\Iterator;
+
 use drycart\data\CompareHelper;
+use Traversable;
 
 /**
  * Sort iterator data using order rules
@@ -17,18 +19,18 @@ class SortIterator extends \SplHeap
 {
     /**
      * Orders
-     * 
+     *
      * @var array
      */
     protected $orders = [];
-    
+
     /**
      * Constructor
-     * 
-     * @param \Traversable $iterator
+     *
+     * @param Traversable $iterator
      * @param array $orders
      */
-    public function __construct(\Traversable $iterator, array $orders)
+    public function __construct(Traversable $iterator, array $orders)
     {
         $this->orders = $orders;
         foreach ($iterator as $line) {
@@ -40,14 +42,13 @@ class SortIterator extends \SplHeap
 
     /**
      * Compare two element using order rules
-     * 
-     * @param type $value1
-     * @param type $value2
+     *
+     * @param mixed $value1
+     * @param mixed $value2
      * @return int
      */
     protected function compare($value1, $value2): int
     {
         return CompareHelper::compareByOrders($this->orders, $value1, $value2);
     }
-
 }

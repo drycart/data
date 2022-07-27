@@ -160,10 +160,10 @@ class DataWrapperTest extends TestCase
         
         $arrayObj = new ArrayObject(['field1'=>'value1']);
         $wrapper2 = new DataWrapper($arrayObj);
-        $this->assertEquals('Object #'.spl_object_id($arrayObj),$wrapper2->title());
+        $this->assertEquals('Object #'.spl_object_hash($arrayObj),$wrapper2->title());
         
         $wrapper3 = new DataWrapper($wrapper2);
-        $this->assertEquals('Object #'.spl_object_id($arrayObj),$wrapper3->title());
+        $this->assertEquals('Object #'.spl_object_hash($arrayObj),$wrapper3->title());
     }
     
     public function testFieldsInfo()

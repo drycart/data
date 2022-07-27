@@ -6,11 +6,12 @@
 namespace drycart\data\tests;
 use drycart\data\tests\dummy\DummyEnum;
 use drycart\data\tests\dummy\DummyExtendedEnum;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author mendel
  */
-class EnumTest extends \PHPUnit\Framework\TestCase
+class EnumTest extends TestCase
 {
     public function testData()
     {

@@ -6,11 +6,12 @@
 namespace drycart\data\tests;
 use drycart\data\CheckHelper;
 use drycart\data\DataWrapper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author mendel
  */
-class CheckHelperTest extends \PHPUnit\Framework\TestCase
+class CheckHelperTest extends TestCase
 {
     protected function prepareWrapper(bool $safe) : DataWrapper
     {

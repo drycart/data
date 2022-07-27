@@ -9,7 +9,7 @@ namespace drycart\data\Iterator;
 
 /**
  * DummySeekableIterator - just wrapper for limitIterator
- * for mark what it implement SeekableIterator 
+ * for mark what it implement SeekableIterator
  *
  * @author mendel
  */
